@@ -1,0 +1,14 @@
+# various editor-related files
+*~
+.*.sw*
+.#*
+\#*
+
+lib
+.monitor
+.nodemonignore
+/app/
+/scripts/
+/static/js/out/
+script.js
+config.cljs

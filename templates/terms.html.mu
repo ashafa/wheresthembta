@@ -1,0 +1,1 @@
+<p>"Where's the MBTA?" is not liable or responsible for the accuracy or completeness of any information provided on this website. We assume no liability or responsibility for any damages arising from a visitor's use of this web service.  The contents are provided as general information only.</p>

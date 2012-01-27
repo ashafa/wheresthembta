@@ -1,0 +1,401 @@
+ /**
+ * HTML5 Boilerplate
+ *
+ * style.css contains a reset, font normalization and some base styles.
+ *
+ * Credit is left where credit is due.
+ * Much inspiration was taken from these projects:
+ * - yui.yahooapis.com/2.8.1/build/base/base.css
+ * - camendesign.com/design/
+ * - praegnanz.de/weblog/htmlcssjs-kickstart
+ */
+
+
+/**
+ * html5doctor.com Reset Stylesheet (Eric Meyer's Reset Reloaded + HTML5 baseline)
+ * v1.6.1 2010-09-17 | Authors: Eric Meyer & Richard Clark
+ * html5doctor.com/html-5-reset-stylesheet/
+ */
+
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+blockquote, q { quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after { content: ""; content: none; }
+
+ins { background-color: #ff9; color: #000; text-decoration: none; }
+
+mark { background-color: #ff9; color: #000; font-style: italic; font-weight: bold; }
+
+del { text-decoration: line-through; }
+
+abbr[title], dfn[title] { border-bottom: 1px dotted; cursor: help; }
+
+table { border-collapse: collapse; border-spacing: 0; }
+
+hr { display: block; height: 1px; border: 0; border-top: 1px solid #ccc; margin: 1em 0; padding: 0; }
+
+input, select { vertical-align: middle; }
+
+/* Mobile phones will adjust text size when the screen orientation changes unless you include a special CSS parameter */
+html {
+    -webkit-text-size-adjust: none;
+   -ms-text-size-adjust: none;
+}
+
+/**
+ * Font normalization inspired by YUI Library's fonts.css: developer.yahoo.com/yui/
+ */
+
+body { *font-size:small; } /* Hack retained to preserve specificity */
+select, input, textarea, button { font:99% sans-serif; }
+
+/* Normalize monospace sizing:
+   en.wikipedia.org/wiki/MediaWiki_talk:Common.css/Archive_11#Teletype_style_fix_for_Chrome */
+pre, code, kbd, samp { font-family: monospace, sans-serif; }
+
+
+/**
+ * Minimal base styles.
+ */
+/* Accessible focus treatment: people.opera.com/patrickl/experiments/keyboard/test */
+a:hover, a:active { outline: none; }
+
+ul, ol { margin-left: 2em; }
+ol { list-style-type: decimal; }
+
+/* Remove margins for navigation lists */
+nav ul, nav li { margin: 0; list-style:none; list-style-image: none; }
+
+small { font-size: 85%; }
+strong, th { font-weight: bold; }
+
+td { vertical-align: top; }
+
+/* Set sub, sup without affecting line-height: gist.github.com/413930 */
+sub, sup { font-size: 75%; line-height: 0; position: relative; }
+sup { top: -0.5em; }
+sub { bottom: -0.25em; }
+
+pre {
+  /* www.pathf.com/blogs/2008/05/formatting-quoted-code-in-blog-posts-css21-white-space-pre-wrap/ */
+  white-space: pre; white-space: pre-wrap; word-wrap: break-word;
+  padding: 15px;
+}
+
+textarea { overflow: auto; } /* www.sitepoint.com/blogs/2010/08/20/ie-remove-textarea-scrollbars/ */
+
+.iem7 legend { margin-left: -7px; }
+
+/* Align checkboxes, radios, text inputs with their label by: Thierry Koblentz tjkdesign.com/ez-css/css/base.css  */
+input[type="radio"] { vertical-align: text-bottom; }
+input[type="checkbox"] { vertical-align: bottom; }
+.iem7 input[type="checkbox"] { vertical-align: baseline; }
+
+/* Hand cursor on clickable input elements */
+label, input[type="button"], input[type="submit"], input[type="image"], button { cursor: pointer; }
+
+/* Webkit browsers add a 2px margin outside the chrome of form elements */
+button, input, select, textarea { margin: 0; }
+
+/* Colors for form validity */
+input:valid, textarea:valid   {  }
+input:invalid, textarea:invalid {
+   border-radius: 1px; -moz-box-shadow: 0px 0px 5px red; -webkit-box-shadow: 0px 0px 5px red; box-shadow: 0px 0px 5px red;
+}
+.no-boxshadow input:invalid, .no-boxshadow textarea:invalid { background-color: #f0dddd; }
+
+/* These selection declarations have to be separate
+   No text-shadow: twitter.com/miketaylr/status/12228805301
+   Also: hot pink! 
+::selection { background:#fff; color:#aaa; text-shadow: none; }
+*/
+
+/* j.mp/webkit-tap-highlight-color 
+a:link { -webkit-tap-highlight-color: #FF5E99; }
+*/
+
+/* Make buttons play nice in IE:
+   www.viget.com/inspire/styling-the-button-element-in-internet-explorer/ */
+button {  width: auto; overflow: visible; }
+
+/* Bicubic resizing for non-native sized IMG:
+   code.flickr.com/blog/2008/11/12/on-ui-quality-the-little-things-client-side-image-resizing/ */
+.iem7 img { -ms-interpolation-mode: bicubic; }
+
+/**
+ * You might tweak these..
+ */
+
+body, select, input, textarea {
+  /* #444 looks better than black: twitter.com/H_FJ/statuses/11800719859 */
+   color: #333;
+  /* Set your base font here, to apply evenly */
+   font: 13px/1.5 Helvetica Neue,Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif;
+   -webkit-font-smoothing: antialiased;
+}
+
+/* Headers (h1, h2, etc) have no default font-size or margin; define those yourself */
+h1, h2, h3, h4, h5, h6 { font-weight: bold; }
+
+a, a:active { color: #4183c4; }
+a:hover { color: #337a9d; }
+
+/* 
+ * Helper classes 
+ */
+ 
+/* prevent callout */
+.nocallout {-webkit-touch-callout: none;}
+
+/* Text overflow with ellipsis */
+.ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* A hack for HTML5 contenteditable attribute on mobile */
+textarea.contenteditable {-webkit-appearance: none;}
+
+/* A workaround for S60 3.x and 5.0 devices which do not animated gif images if they have been set as display: none */
+.gifhidden {position: absolute; left: -100%;}
+
+
+
+
+/* Primary Styles
+   Author:
+*/
+
+html {
+   background: #f8f8f8;
+   padding: 20px;
+}
+
+#container {
+   text-align: center;
+}
+
+#wrapper {
+   text-align: left;
+   margin: 0 auto;
+   max-width: 540px;
+}
+
+hr {
+   height: 0px;
+
+}
+
+ul {
+   list-style-type: none;
+   margin: 0;
+}
+
+header {
+   padding-bottom: 20px;
+}
+
+header ul {
+   padding-bottom: 20px;
+}
+
+header ul li {
+   display: inline-block;
+   padding-right: 10px;
+}
+
+header ul li.seperator {
+   padding-right: 10px;
+   color: #ccc;
+}
+
+header a {
+   text-decoration: none;
+}
+
+h1 {
+   font-size: 200%;
+   font-weight: normal;
+}
+
+h2 {
+   font-size: 110%;
+}
+
+h3 {
+   color: #777;
+   font-size: 110%;
+   font-weight: normal;
+}
+
+h4 {
+   background: #eaeaea;
+   color: #777;
+   padding: 3px 10px;
+}
+
+
+p {
+   padding-bottom: 15px;
+}
+
+section#main {
+   position: relative;
+}
+
+div.status-bar {
+   position: absolute;
+   top: 0;
+   height: 3px;
+   width: 100%;
+   background: #94c468;
+   display: none;
+}
+
+div#status-bad {
+   background: #e72932;
+}
+
+section#main ul {
+   padding-left: 10px;
+}
+
+section#main ul li {
+   padding-bottom: 5px;
+}
+
+ul.station-list {
+   padding-top: 5px;
+}
+
+div#predictions {
+   padding-top: 15px;
+}
+
+div#predictions ul {
+   padding: 10px 0;
+}
+
+div#predictions ul.directions {
+   padding: 0;
+}
+
+div#predictions ul.directions li {
+   display: inline-block;
+   padding: 0 10px;
+   font-size: 150%;
+   height: 50px;
+}
+
+
+section#main ul li.info {
+   width: 100%;
+   font-size: 100%;
+   color: #aaa;
+   text-align: center;
+}
+
+section#nearby-stations {
+   padding-top: 25px;
+
+}
+
+section#nearby-stations ul {
+   padding: 10px 0 0 10px;
+}
+
+section#nearby-stations ul li {
+   padding: 0 0 5px;
+}
+
+footer {
+   color: #ccc;
+   margin-top: 25px;
+   padding-top: 5px;
+   border-top: 1px solid #ddd;
+}
+
+
+footer ul {
+   margin-top: -7px;
+}
+
+footer ul li {
+   display: inline-block;
+   padding: 13px 0 0 0;
+   margin-right: 10px;
+
+}
+
+
+footer ul li.active {
+   border-top: 3px solid #ff6600;
+}
+
+footer ul li:last-child {
+   float: right;
+   padding-top: 16px;
+   margin-right: 0;
+}
+
+footer a {
+   color: #aaa;
+   text-decoration: none;
+}
+
+
+footer a:hover {
+   color: #aaa;
+   text-decoration: underline;
+}
+
+/* Adaptive Styles
+   Author: 
+*/
+
+@media only screen and (max-width : 959px)  {
+/* Styles */
+    
+}
+
+@media only screen and (max-width : 767px)  {
+/* Styles */
+
+}
+
+
+@media only screen and (max-width : 540px)  {
+
+ 
+}
+
+/* iPhone 4 and high pixel ratio devices ----------- */
+@media
+only screen and (-webkit-min-device-pixel-ratio : 1.5),
+only screen and (min-device-pixel-ratio : 1.5) {
+/* Styles */
+
+}
