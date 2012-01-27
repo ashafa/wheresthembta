@@ -25,7 +25,7 @@
 
 (ns wheresthembta.core
   (:require [cljs.nodejs :as node]
-            [wheresthembta.shared.utils :as utils]
+            [wheresthembta.config :as config]
             [wheresthembta.views :as view]))
 
 
@@ -42,6 +42,6 @@
     (.get  "/{transit}/{line}" view/stations)
     (.get  "/{transit}/{line}/{station}" view/station-info)
     (.post "/{transit}/{line}/{station}" view/station-info)
-    (.listen 9988)))
+    (.listen config/PORT)))
 
 (set! *main-cli-fn* main)
