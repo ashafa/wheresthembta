@@ -25,6 +25,7 @@
 
 (ns wheresthembta.views
   (:require [cljs.nodejs :as node]
+            [clojure.string :as string]
             [wheresthembta.config :as config]
             [wheresthembta.real-time-feed :as real-time-feed]
             [wheresthembta.shared.mbta-data :as mbta-data]
@@ -106,7 +107,7 @@
                   predictions-json    (.stringify js/JSON (utils/clj->js station-predictions))]
               (if (= (.-method req) "POST")
                 (macros/render {:Content-Type "application/json"} predictions-json)
-                {:title            (:title (mbta-data/get-value transit-id :lines line-id :stations station-id))
+                {:title            (first (string/split (:title (mbta-data/get-value transit-id :lines line-id :stations station-id)) #"\s-\s"))
                  :bread-crumbs     (templates/bread-crumbs transit-id :lines line-id)
                  :main-content     (templates/div-of-station-predictions station-predictions)
                  :predictions      true

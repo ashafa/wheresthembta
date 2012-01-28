@@ -64,7 +64,7 @@
                                    :platform-keys #{"OHAYN" "OHAYS"}
                                    :location      [-71.05827 42.36243]}
                                   {:id            "state"
-                                   :title         "State"
+                                   :title         "State - Orange Line"
                                    :platform-keys #{"OSTSN" "OSTSS"}
                                    :location      [-71.057717 42.358675]}
                                   {:id            "downtown-crossing"
@@ -154,7 +154,7 @@
                                    :platform-keys #{"BAQUE" "BAQUW"}
                                    :location      [-71.05264689683094 42.3594970703125]}
                                   {:id            "state"
-                                   :title         "State"
+                                   :title         "State - Blue Line"
                                    :platform-keys #{"BSTAE" "BSTAW"}
                                    :location      [-71.057708 42.358617]}
                                   {:id            "government-center"

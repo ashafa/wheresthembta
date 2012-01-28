@@ -63,7 +63,7 @@
   [:ul {:class "station-list"}
    (for [station stations]
      (let [href (str "/" (string/join "/" [transit-id line-id (station :id)]))]
-       [:li [:a {:href href} (station :title)]]))])
+       [:li [:a {:href href} (first (string/split (station :title) #"\s-\s"))]]))])
 
 (hiccups/defhtml div-of-station-predictions
   [station-predictions]
@@ -100,5 +100,13 @@
   [:h4 "Nearby Stations:"]
   [:ul {}
    (for [station stations]
-     (let [href (station :url)]
-       (if (not= href url) [:li [:a {:href href} (station :title)]])))])
+     (let [href               (station :url)
+           [title line-title] (string/split (station :title) #"\s\-\s")]
+       (if (not= href url)
+         [:li [:a {:href href} title]
+          (if line-title [:span (str " (" line-title ")")])])))])
+
+(hiccups/defhtml tool-tip
+  [position message]
+  [:div {:class "tool-tip" :style position}
+   [:div "&diams;"] [:span [:strong "Pro Tip: "]message]])

@@ -30,9 +30,33 @@
             [wheresthembta.shared.templates :as templates]))
 
 
+
 (def current-url (.. js/document -location -pathname))
 
 (def $ js/$)
+
+(def fresh-indicator (atom nil))
+
+
+(defn get-predictions
+  []
+  (client-utils/get-json-with-post current-url {}
+    {:success #(do (.off ($ "#main") "click" "#predictions" get-predictions)
+                   (-> ($ "#status-good") (.stop) (.fadeIn 500))
+                   (indicate-freshness 60)
+                   (set! js/PREDICTIONS %))
+     :error   #(-> ($ "#status-good") (.stop) (.fadeOut 500))}))
+
+
+
+(defn indicate-freshness
+  [age]
+  (js/clearTimeout @fresh-indicator)
+  (reset! fresh-indicator
+          (js/setTimeout #(do (-> ($ "#status-good") (.stop) (.fadeOut 500))
+                              (comment .prepend ($ "#main") (templates/tool-tip "top:10px;right:5px;" "Test."))
+                              (.on ($ "#main") "click" "#predictions" get-predictions))
+                         (* age 1000))))
 
 
 (defn refresh-predictions
@@ -40,11 +64,7 @@
   (js/setTimeout
    (fn []
      (let [predictions-html ($ (templates/div-of-station-predictions (js->clj js/PREDICTIONS :keywordize-keys true)))]
-       (if (> (.-length (.find predictions-html "li.refresh")) 0)
-         (client-utils/get-json-with-post current-url {}
-           {:success #(do (.fadeIn ($ "#status-good") 500)
-                          (set! js/PREDICTIONS %))
-            :error #(.fadeOut ($ "status-good") 500)}))
+       (if (> (.-length (.find predictions-html "li.refresh")) 0) (get-predictions))
        (.html ($ "#predictions") (.html predictions-html))
        (refresh-predictions))) 1000))
 
@@ -68,6 +88,7 @@
     (show-closest-stations))
   (when js/PREDICTIONS
     (.show ($ "div.status-bar"))
+    (indicate-freshness 60)
     (refresh-predictions)))
 
-($ main)
+(main)

@@ -218,6 +218,10 @@ header {
    padding-bottom: 20px;
 }
 
+nav {
+   height: 40px;
+}
+
 header ul {
    padding-bottom: 20px;
 }
@@ -313,6 +317,7 @@ div#predictions ul.directions li {
 
 section#main ul li.info {
    width: 100%;
+   padding-top: 5px;
    font-size: 100%;
    color: #aaa;
    text-align: center;
@@ -329,6 +334,12 @@ section#nearby-stations ul {
 
 section#nearby-stations ul li {
    padding: 0 0 5px;
+}
+
+section#nearby-stations ul li span {
+   color: #aaa;
+   font-size: 90%;
+   margin-left: 5px;
 }
 
 footer {
@@ -370,6 +381,34 @@ footer a {
 footer a:hover {
    color: #aaa;
    text-decoration: underline;
+}
+
+
+div.tool-tip {
+   background: #444;
+   color: #ddd;
+   position: absolute;
+   border-radius: 5px;
+   width: 140px;
+}
+
+div.tool-tip div {
+   position: relative;
+   color: #444;
+   top: -14px;
+   left: 5px;
+   font-size: 150%;
+}
+
+div.tool-tip span {
+   display: block;
+   padding: 10px;
+   margin-top: -30px;
+   font-size: 85%;
+}
+
+div.tool-tip strong {
+   margin-right: 5px;
 }
 
 /* Adaptive Styles
