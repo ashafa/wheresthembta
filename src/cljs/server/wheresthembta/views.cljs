@@ -42,7 +42,7 @@
   
 (def home
   (macros/render
-   (>> "base.html" {:title        "Home"
+   (>> "base.html" {:title        "Where's the MBTA?"
                     :home         true
                     :main-content (templates/unordered-list-of-transit-systems)})))
 

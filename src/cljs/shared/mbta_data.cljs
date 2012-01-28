@@ -34,7 +34,7 @@
     :lines [{:id                 "blue-line"
              :title              "Blue Line"
              :real-time-feed-url "http://developer.mbta.com/Data/blue.json"
-             :directions         [{:key "W" :title "Inbound"} {:key "E" :title "Outbound"}]
+             :directions         [{:key "W" :title "To Bowdoin"} {:key "E" :title "To Wonderland"}]
              :stations           [{:id            "wonderland"
                                    :title         "Wonderland"
                                    :platform-keys #{"BWONE" "BWONW"}
@@ -79,8 +79,8 @@
                                    :title         "Government Center"
                                    :platform-keys #{"BGOVE" "BGOVW"}
                                    :location      [-71.05939865112305 42.359161376953125]}
-                                  {:id            "bowdin"
-                                   :title         "Bowdin"
+                                  {:id            "bowdoin"
+                                   :title         "Bowdoin"
                                    :platform-keys #{"BBOWE" "BBOWW"}
                                    :location      [-71.06285 42.36128]}]}]}])
 
