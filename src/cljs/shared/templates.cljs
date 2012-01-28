@@ -52,7 +52,7 @@
 
 (hiccups/defhtml unordered-list-of-lines
   [transit-id lines]
-  [:p "Orange and Red subway lines coming soon."]
+  [:p "Red line coming soon."]
   [:ul (for [line lines]
          (let [href (str "/" (string/join "/" [transit-id (line :id)]))]
            [:li [:a {:href href} (line :title)]]))])

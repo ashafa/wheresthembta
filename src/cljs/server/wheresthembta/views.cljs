@@ -48,7 +48,7 @@
 
 (def about
   (macros/render
-   (>> "base.html" {:title       "About"
+   (>> "base.html" {:title        "About"
                     :about        true
                     :bread-crumbs (templates/bread-crumbs)})))
 
