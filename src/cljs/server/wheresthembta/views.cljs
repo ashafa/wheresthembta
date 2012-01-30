@@ -102,8 +102,10 @@
                                              {:direction-key   (:key direction)
                                               :direction-title (:title direction)
                                               :predictions     (for [prediction prediction-data
-                                                                     :when (= (:key direction) (last (prediction :PlatformKey)))]
-                                                                 (prediction :Time))}) directions)
+                                                                     :when (and (= (:route direction) (prediction :Route))
+                                                                                (= (:key direction) (last (prediction :PlatformKey))))]
+                                                                 {:time    (js/Date. (prediction :Time))
+                                                                  :revenue (prediction :Revenue)})}) directions)
                   predictions-json    (.stringify js/JSON (utils/clj->js station-predictions))]
               (if (= (.-method req) "POST")
                 (macros/render {:Content-Type "application/json"} predictions-json)

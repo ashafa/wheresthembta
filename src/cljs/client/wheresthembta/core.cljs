@@ -41,11 +41,12 @@
 (defn get-predictions
   []
   (client-utils/get-json-with-post current-url {}
-    {:success #(do (.off ($ "#main") "click" "#predictions" get-predictions)
-                   (-> ($ "#status-good") (.stop) (.fadeIn 500))
-                   (indicate-freshness 60)
-                   (set! js/PREDICTIONS %))
-     :error   #(-> ($ "#status-good") (.stop) (.fadeOut 500))}))
+    {:success (fn [data]
+                (.off ($ "#main") "click" "#predictions" get-predictions)
+                (-> ($ "#status-good") (.stop true true) (.animate (utils/clj->js {:opacity 1}) 500))
+                (-> ($ "div.tool-tip") (.stop true true) (.fadeOut 150 #(.remove ($ "div.tool-tip"))))
+                (indicate-freshness 60)
+                (set! js/PREDICTIONS data))}))
 
 
 
@@ -53,9 +54,13 @@
   [age]
   (js/clearTimeout @fresh-indicator)
   (reset! fresh-indicator
-          (js/setTimeout #(do (-> ($ "#status-good") (.stop) (.fadeOut 500))
-                              (comment .prepend ($ "#main") (templates/tool-tip "top:10px;right:5px;" "Test."))
-                              (.on ($ "#main") "click" "#predictions" get-predictions))
+          (js/setTimeout (fn []
+                           (-> ($ "#status-good") (.stop true true) (.animate (utils/clj->js {:opacity 0}) 500))
+                           (.prepend ($ "#main") (templates/status-bar-tool-tip "top:12px;right:5px;"))
+                           (-> ($ "div.tool-tip") (.stop true true) (.fadeIn 150))
+                           (.click ($ "input#supress-status-bar-tip")
+                                   (fn [] (-> ($ "div.tool-tip") (.stop true true) (.fadeOut 150 #(.remove ($ "div.tool-tip"))))))
+                           (.on ($ "#main") "click" "#predictions" get-predictions))
                          (* age 1000))))
 
 

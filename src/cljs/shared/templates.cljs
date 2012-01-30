@@ -43,7 +43,7 @@
                                                                     :text (:title transit-data)})
                                                      (+ 2 length)))))]
                            [:li [:a {:href (:href anchor)} (:text anchor)]])
-                         (repeat [:li {:class "seperator"} "&rsaquo;"])))]])
+                         (repeat [:li.seperator "&rsaquo;"])))]])
 
 (hiccups/defhtml unordered-list-of-transit-systems
   []
@@ -52,7 +52,7 @@
 
 (hiccups/defhtml unordered-list-of-lines
   [transit-id lines]
-  [:p "Red line coming soon."]
+  [:p "What about the Green Line? Unfortunately, the Green Line does not have the same type of train tracking technology as other lines."]
   [:ul (for [line lines]
          (let [href (str "/" (string/join "/" [transit-id (line :id)]))]
            [:li [:a {:href href} (line :title)]]))])
@@ -60,7 +60,7 @@
 (hiccups/defhtml unordered-list-of-stations
   [title transit-id line-id stations]
   [:p "List of " [:em (string/lower-case title)] " stations:"]
-  [:ul {:class "station-list"}
+  [:ul.station-list
    (for [station stations]
      (let [href (str "/" (string/join "/" [transit-id line-id (station :id)]))]
        [:li [:a {:href href} (first (string/split (station :title) #"\s-\s"))]]))])
@@ -72,28 +72,29 @@
      [:ul {}
       (for [station-prediction station-predictions]
         [:li [:h3 (station-prediction :direction-title)]
-         [:ul {:class "directions"}
+         [:ul.directions
           (let [predictions       (station-prediction :predictions)
                 predictions-count (count predictions)]
             (if (> predictions-count 0)
-              (for [prediction (take 3 (sort predictions))]
-                (let [when        (/ (. (utils/convert-to-utc-date (js/Date. prediction)) (getTime)) 1000)
+              (for [prediction (take 3 (sort-by :time predictions))]
+                (let [when        (/ (. (utils/convert-to-utc-date (js/Date. (prediction :time))) (getTime)) 1000)
+                      revenue (if (= (prediction :revenue) "Revenue") "revenue " "non-revenue ")
                       seconds     (.floor js/Math (.abs js/Math (- when now)))
                       is-reverse? (>= now when)
                       time-str    (utils/format-seconds seconds)
                       time-html   (if is-reverse?
-                                    (cond (= seconds 0)   [:li.refresh time-str]
-                                          (< seconds 30)  [:li "Approaching"]
-                                          (= seconds 30)  [:li.refresh "Approaching"]
-                                          (< seconds 70)  [:li "Arriving"]
-                                          (= seconds 70)  [:li.refresh "Arriving"]
-                                          (< seconds 130) [:li "Leaving"]
-                                          (= seconds 130) [:li.refresh "Leaving"]
+                                    (cond (= seconds 0)   [:li {:class (str revenue "refresh")} time-str]
+                                          (< seconds 30)  [:li {:class revenue} "Approaching"]
+                                          (= seconds 30)  [:li {:class (str revenue "refresh")} "Approaching"]
+                                          (< seconds 70)  [:li {:class revenue} "Arriving"]
+                                          (= seconds 70)  [:li {:class (str revenue "refresh")} "Arriving"]
+                                          (< seconds 130) [:li {:class revenue} "Leaving"]
+                                          (= seconds 130) [:li {:class (str revenue "refresh")} "Leaving"]
                                           :else nil)
                                     [:li time-str])]
                   (if (and (= predictions-count 1) (not time-html))
-                    [:li {:class "info"} "No predictions."] time-html)))
-              [:li {:class "info"} "No predictions."]))]])])])
+                    [:li.info "No predictions."] time-html)))
+              [:li.info "No predictions."]))]])])])
 
 (hiccups/defhtml unordered-list-of-nearest-stations
   [stations url]
@@ -106,7 +107,11 @@
          [:li [:a {:href href} title]
           (if line-title [:span (str " (" line-title ")")])])))])
 
-(hiccups/defhtml tool-tip
-  [position message]
-  [:div {:class "tool-tip" :style position}
-   [:div "&diams;"] [:span [:strong "Pro Tip: "]message]])
+(hiccups/defhtml status-bar-tool-tip
+  [position]
+  [:div.tool-tip {:style position}
+   [:div "&diams;"]
+   [:p [:strong "Pro Tip: "]
+    "A red status bar indicates the times shown might need to be refreshed for a more accurate prediction."]
+   [:p "To refresh the times, simply click on any of the predictions."]
+   [:p [:input#supress-status-bar-tip {:type "checkbox" :disabled "disabled"}] "Don't show this again."]])
