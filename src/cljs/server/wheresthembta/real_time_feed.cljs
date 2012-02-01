@@ -60,6 +60,9 @@
                                                                :status ::not-fetching})
                                          (doseq [waiter @waiters]
                                            (waiter data))
-                                         (reset! waiters []))))))))
+                                         (reset! waiters [])))
+                      (.on "error" #(do (doseq [waiter @waiters]
+                                          (waiter (or data [])))
+                                        (reset! waiters []))))))))
         (callback req res [])))))
   
