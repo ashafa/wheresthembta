@@ -25,14 +25,14 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/apple-touch-icon-114x114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/apple-touch-icon-72x72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="/static/apple-touch-icon-precomposed.png">
-    <link rel="shortcut icon" href="apple-touch-icon.png">
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="shortcut icon" href="/static/apple-touch-icon.png">
+    <link rel="shortcut icon" href="/favicon.ico">
     <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <script src="/static/js/lib/modernizr-1.7.min.js"></script>
-    <link rel="stylesheet" href="/static/css/style.css?v=3">
-    
+    <link rel="stylesheet" href="/static/css/style.css?v=37">
+    <link rel="stylesheet" href="/static/css/font-awesome.css?v=1">
   </head>
   <body>
     <div id="container">
@@ -44,39 +44,42 @@
           <h1>{{ title }}</h1>
         </header>
         <section id="main">
+          {{#predictions}}
           <div id="status-bad" class="status-bar"></div>
           <div id="status-good" class="status-bar"></div>
-          
+          {{/predictions}}
+
           {{#home}} {{> home.html }} {{/home}}
           {{#about}} {{> about.html }} {{/about}}
-          {{#terms}} {{> terms.html }} {{/terms}}
-          {{#privacy}} {{> privacy.html }} {{/privacy}}
 
           {{{ main-content }}}
   
+        </section>
+        <section id="relevant-tweets">
+          {{{ relevant-tweets }}}
         </section>
         <section id="nearby-stations"></section>
         <footer>
           <ul>
             <li{{#about}} class="active"{{/about}}><a href="/about">About</a></li>
-            <li{{#terms}} class="active"{{/terms}}><a href="/terms">Terms</a></li>
-            <li{{#privacy}} class="active"{{/privacy}}><a href="/privacy">Privacy</a></li>
-            <li><a href="http://twitter.com/wheresthembta" target="_blank">@wheresthembta</a></li>
+            <li><a href="//twitter.com/wheresthembta" class="external">Twitter</a></li>
+            <li><a href="//github.com/ashafa/wheresthembta" class="external">GitHub</a></li>
             <li> &copy; 2012 Where's the MBTA?</li>
           </ul>
         </footer>
       </div>
     </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script>!window.jQuery && document.write(unescape('%3Cscript src="/static/js/lib/jquery-1.7.1.min.js"%3E%3C/script%3E'))</script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/static/js/script.js"></script>
     <script>
-      var PREDICTIONS = false;
+      var SERVER_TIME_DIFF = 0, PREDICTIONS = false;
       {{#predictions}}
+      SERVER_TIME_DIFF = new Date().getTime() - {{ time }};
       PREDICTIONS = {{{ predictions-json }}};
       {{/predictions}}
     </script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script>!window.jQuery && document.write(unescape('%3Cscript src="/static/js/lib/jquery-1.7.1.min.js"%3E%3C/script%3E'))</script>
-    <script src="/static/js/lib/innershiv.min.js"></script>
-    <script src="/static/js/script.js"></script>
     <script>
       var _gaq=[['_setAccount','UA-28700129-1'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID
       (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;

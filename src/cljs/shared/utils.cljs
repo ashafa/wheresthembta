@@ -1,28 +1,3 @@
-;; Copyright (c) 2012 Tunde Ashafa
-;; All rights reserved.
-
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions
-;; are met:
-;; 1. Redistributions of source code must retain the above copyright
-;;    notice, this list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright
-;;    notice, this list of conditions and the following disclaimer in the
-;;    documentation and/or other materials provided with the distribution.
-;; 3. The name of the author may not be used to endorse or promote products
-;;    derived from this software without specific prior written permission.
-
-;; THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
-;; IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-;; OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-;; IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-;; INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-;; NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-;; DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-;; THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 (ns wheresthembta.shared.utils)
 
 
@@ -55,7 +30,7 @@
 
 
 (defn convert-to-utc-date
-  "Converts a date to UTC date."
+  "Converts a JavaScript date to UTC."
   [date]
   (js/Date. (. date (getUTCFullYear))
             (. date (getUTCMonth))
@@ -73,8 +48,45 @@
 
 
 (defn format-seconds
-  "Formats a number in seconds to a human readable form. ex. '09:34'."
+  "Formats a number representing seconds to a more human readable string.
+   Ex. 574 => '09:34'."
   [seconds]
   (str (pad-number-with-zero (.floor js/Math (/ (.abs js/Math seconds) 60)))
        ":"
        (pad-number-with-zero (mod (.abs js/Math seconds) 60))))
+
+(defn pretty-date
+  "Takes a date string and returns a more human readable string that
+   represents how long ago the date represents if the date string is
+   less than seven days ago."
+  [date-str]
+  (let [date     (convert-to-utc-date (js/Date. (or date-str "")))
+        diff     (/ (- (.getTime (convert-to-utc-date (js/Date.))) (.getTime date)) 1000)
+        day-diff (.floor js/Math (/ diff 86400))]
+    (if-not (or (js/isNaN day-diff) (< day-diff 0))
+      (or (and (= day-diff 0)
+               (or (and (< diff 60) "just now")
+                   (and (< diff 120) "a minute ago")
+                   (and (< diff 3600) (str (.floor js/Math (/ diff 60)) " minutes ago"))
+                   (and (< diff 7200) "an hour ago")
+                   (and (< diff 86400) (str (.floor js/Math (/ diff 3600)) " hours ago"))))
+          (and (= day-diff 1) "yesterday")
+          (and (< day-diff 7) (str day-diff " days ago"))
+          (and (>= day-diff 7) date-str)))))
+
+(defn linkify-tweet-text
+  "Takes a tweet and returns the tweet text with hashtags, urls (not t.co), and usernames
+   converted to the appropiate html anchor links in accordance with tweets."
+  [tweet]
+  (let [text          (tweet :text)
+        urls          (-> tweet :entities :urls)
+        url-regex     (js/RegExp. "(((https?://)|www\\.).+?)(([!?,.\\)]+)?[\\]\\)]?)([^a-z0-9_\\-\\./]|$)" "ig")
+        mention-regex (js/RegExp. "(^|[^a-z0-9_/\\\\])@([a-z0-9_]+)" "ig")
+        hashtag-regex (js/RegExp. "(^|[^a-z0-9_/\\\\])#([a-z]+[a-z0-9_]*|[0-9]+[a-z_]+)" "ig")]
+    (-> text
+        (.replace url-regex #(loop [url urls]
+                               (if (or (= (:url (first url)) %2) (= 0 (count url)))
+                                 (str "<a href='" %2 "' class='external'>" (or (and (= 0 (count url)) %2) (:display_url (first url))) "</a>" %7)
+                                 (recur (next url)))))
+        (.replace mention-regex #(str %2 "@<a href='//twitter.com/" %3 "' class='external'>" %3 "</a>"))
+        (.replace hashtag-regex #(str %2 "<a href='//search.twitter.com/search?q=" %3 "' class='external'>#" %3 "</a>")))))

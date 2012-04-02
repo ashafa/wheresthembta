@@ -150,7 +150,7 @@ button {  width: auto; overflow: visible; }
 
 body, select, input, textarea {
   /* #444 looks better than black: twitter.com/H_FJ/statuses/11800719859 */
-   color: #333;
+   color: #444;
   /* Set your base font here, to apply evenly */
    font: 13px/1.5 Helvetica Neue,Arial,Helvetica,'Liberation Sans',FreeSans,sans-serif;
    -webkit-font-smoothing: antialiased;
@@ -191,8 +191,13 @@ textarea.contenteditable {-webkit-appearance: none;}
 
 html {
    background: #f8f8f8;
-   padding: 20px;
+   padding: 0px 10px;
 }
+
+body {
+   padding: 25px 0;
+}
+
 
 #container {
    text-align: center;
@@ -216,6 +221,7 @@ ul {
 
 header {
    padding-bottom: 20px;
+   font-size: 110%;
 }
 
 nav {
@@ -228,12 +234,12 @@ header ul {
 
 header ul li {
    display: inline-block;
-   padding-right: 10px;
+   padding-right: 15px;
 }
 
 header ul li.seperator {
-   padding-right: 10px;
-   color: #ccc;
+   padding-right: 15px;
+   color: #aaa;
 }
 
 header a {
@@ -241,33 +247,52 @@ header a {
 }
 
 h1 {
-   font-size: 200%;
+   font-size: 190%;
    font-weight: normal;
 }
 
 h2 {
    font-size: 110%;
+   text-align: left;
+   margin-bottom: 10px;
 }
 
 h3 {
    color: #777;
-   font-size: 110%;
+   font-size: 120%;
    font-weight: normal;
 }
 
 h4 {
+   text-align: left;
    background: #eaeaea;
    color: #777;
-   padding: 3px 10px;
+   font-size: 120%;
+   font-weight: normal;
+   padding: 5px 10px;
 }
 
 
 p {
-   padding-bottom: 15px;
+   text-align: left;
+   padding-bottom: 25px;
+}
+
+ul, ol {
+   text-align: left;
+}
+
+ol.footnotes {
+   font-size: 85%;
+}
+
+#bread-crumbs {
+   font-weight: bold;
 }
 
 section#main {
    position: relative;
+   text-align: center;
 }
 
 div.status-bar {
@@ -276,46 +301,89 @@ div.status-bar {
    height: 3px;
    width: 100%;
    background: #94c468;
-   display: none;
 }
 
 div#status-bad {
-   background: #e72932;
+   background: #aaa;
 }
 
 section#main ul {
    padding-left: 10px;
 }
 
+
 section#main ul li {
    padding-bottom: 5px;
 }
 
 ul.station-list {
-   padding-top: 5px;
+   padding: 10px 0 0 10px;
+   font-size: 120%;
+
 }
+
+ul.station-list li {
+   padding: 3px 0 3px 0;
+   margin: 0 0 2px 0;
+}
+
+ul.station-list li a {
+   text-decoration: none;
+}
+
+ul.station-list li span {
+   color: #aaa;
+   font-size: 90%;
+   margin-left: 5px;
+}
+
 
 div#predictions {
    padding-top: 15px;
+   text-align: left;
 }
+
 
 div#predictions ul {
    padding: 10px 0;
 }
 
+
+div#predictions li.prediction {
+   position: relative;
+   margin-bottom: 25px;
+}
+
+
+div#predictions span.info {
+   position: relative;
+   left: 10px;
+   color: #aaa;
+   z-index: -1;
+}
+
 div#predictions ul.directions {
    padding: 0;
+   background: #f8f8f8;
+   position: absolute;
+   width: 100%;
+   top: 20px;
+   
+
 }
 
 div#predictions ul.directions li {
    display: inline-block;
-   padding: 0 10px;
-   font-size: 145%;
-   height: 50px;
+   padding: 0 5px 0 10px;
+   font-size: 170%;
+   height: 45px;  
 }
 
 
+
 section#main ul li.info {
+   margin: 0;
+   padding: 0;
    width: 100%;
    font-size: 100%;
    color: #aaa;
@@ -323,25 +391,12 @@ section#main ul li.info {
 }
 
 section#nearby-stations {
-   padding-top: 25px;
+   padding-top: 7px;
 
-}
-
-section#nearby-stations ul {
-   padding: 10px 0 0 10px;
-}
-
-section#nearby-stations ul li {
-   padding: 0 0 5px;
-}
-
-section#nearby-stations ul li span {
-   color: #aaa;
-   font-size: 90%;
-   margin-left: 5px;
 }
 
 footer {
+   text-align: center;
    color: #ccc;
    margin-top: 25px;
    padding-top: 5px;
@@ -357,7 +412,6 @@ footer ul li {
    display: inline-block;
    padding: 13px 0 0 0;
    margin-right: 10px;
-
 }
 
 
@@ -373,7 +427,6 @@ footer ul li:last-child {
 
 footer a {
    color: #aaa;
-   text-decoration: none;
 }
 
 
@@ -384,36 +437,53 @@ footer a:hover {
 
 
 div.tool-tip {
-   background: #444;
-   color: #ddd;
-   position: absolute;
    border-radius: 5px;
-   width: 180px;
+   margin: 0 auto;
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   text-align: center;
    display: none;
+   z-index: 10;
 }
 
-div.tool-tip div {
+div.tool-tip span {
+   display: inline-block;
    position: relative;
-   color: #444;
-   top: -14px;
-   margin-bottom: -20px;
-   left: 5px;
-   font-size: 150%;
+   width: 40px;
+   font-size: 33px; 
+   font-weight: bold;
+   margin: 40px auto;
+   color: #ddd;
+   background-color: rgba(0,0,0,0.8);
+   border-radius: 5px;
+   padding: 15px 20px 12px 20px;
 }
 
-div.tool-tip p {
+
+ul.tweets {
+   margin-bottom: 35px;
+}
+
+ul.tweets li {
+   margin: 15px 10px 0px 10px;
+}
+
+ul.tweets li strong {
    display: block;
-   padding: 0 10px 10px 10px;
-   line-height: 1.1em;
-   font-size: 85%;
 }
 
-div.tool-tip strong {
-   margin-right: 5px;
+ul.tweets li a {
+   text-decoration: none;
 }
 
-div.tool-tip input {
-   margin-right: 5px;
+ul.tweets li p {
+   margin: 0;
+   padding: 0;
+}
+
+ul.tweets li time {
+   color: #aaa;
 }
 
 /* Adaptive Styles
@@ -431,9 +501,48 @@ div.tool-tip input {
 }
 
 
-@media only screen and (max-width : 540px)  {
+@media only screen and (max-width : 450px)  {
 
+   header ul li {
+      padding-right: 5px;
+   }
+   
+   header ul li:last-child {
+      padding-right: 0;
+   }
+   
+   header ul li.seperator {
+      padding-right: 5px;
+   }
+
+   div#predictions ul.directions li {
+      padding: 0 8px;
+   }
  
+ 
+}
+
+@media only screen and (max-width : 320px)  {
+
+   div#predictions ul.directions li {
+      font-size: 140%;
+      padding: 0 10px 0 0;
+   }
+   
+   div#predictions ul.directions li:last-child {
+      padding: 0 0 0 0;
+   }
+
+   div#predictions ul.directions li:first-child {
+      padding: 0 10px 0 15px;
+   }
+
+
+   section#main ul li.info {
+      font-size: 100%;
+      padding: 0;
+   }
+   
 }
 
 /* iPhone 4 and high pixel ratio devices ----------- */

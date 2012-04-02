@@ -1,28 +1,3 @@
-;; Copyright (c) 2012 Tunde Ashafa
-;; All rights reserved.
-
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions
-;; are met:
-;; 1. Redistributions of source code must retain the above copyright
-;;    notice, this list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright
-;;    notice, this list of conditions and the following disclaimer in the
-;;    documentation and/or other materials provided with the distribution.
-;; 3. The name of the author may not be used to endorse or promote products
-;;    derived from this software without specific prior written permission.
-
-;; THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
-;; IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-;; OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-;; IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-;; INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-;; NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-;; DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-;; THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 (ns wheresthembta.core
   (:require [wheresthembta.client-utils :as client-utils]
             [wheresthembta.shared.utils :as utils]
@@ -42,9 +17,15 @@
   []
   (client-utils/get-json-with-post current-url {}
     {:success (fn [data]
-                (.off ($ "#main") "click" "#predictions" get-predictions)
-                (-> ($ "#status-good") (.stop true true) (.animate (utils/clj->js {:opacity 1}) 500))
-                (-> ($ "div.tool-tip") (.stop true true) (.fadeOut 150 #(.remove ($ "div.tool-tip"))))
+                (-> ($ "#status-good")
+                    (.stop true true)
+                    (.fadeIn 500))
+                (-> ($ "#main")
+                    (.stop true true)
+                    (.animate (utils/clj->js {:opacity 1}) 500))
+                (-> ($ "div.tool-tip")
+                    (.stop true true)
+                    (.fadeOut 500 #(.remove ($ "div.tool-tip"))))
                 (indicate-freshness 60)
                 (set! js/PREDICTIONS data))}))
 
@@ -55,12 +36,17 @@
   (js/clearTimeout @fresh-indicator)
   (reset! fresh-indicator
           (js/setTimeout (fn []
-                           (-> ($ "#status-good") (.stop true true) (.animate (utils/clj->js {:opacity 0}) 500))
-                           (.prepend ($ "#main") (templates/status-bar-tool-tip "top:12px;right:5px;"))
-                           (-> ($ "div.tool-tip") (.stop true true) (.fadeIn 150))
-                           (.click ($ "input#supress-status-bar-tip")
-                                   (fn [] (-> ($ "div.tool-tip") (.stop true true) (.fadeOut 150 #(.remove ($ "div.tool-tip"))))))
-                           (.on ($ "#main") "click" "#predictions" get-predictions))
+                           (-> ($ "#status-good")
+                               (.stop true true)
+                               (.fadeOut 500))
+                           (-> ($ "#main")
+                               (.prepend  (templates/status-bar-tool-tip ""))
+                               (.stop true true)
+                               (.animate (utils/clj->js {:opacity 0.5}) 500))
+                           (-> ($ "div.tool-tip")
+                               (.stop true true)
+                               (.fadeIn 500)
+                               (.click get-predictions)))
                          (* age 1000))))
 
 
@@ -78,7 +64,7 @@
   []
   (-> js/navigator .-geolocation
       (.getCurrentPosition
-       #(let [stations (take 3 (sort-by :distance
+       #(let [stations (take 6 (sort-by :distance
                                         (for [station mbta-data/all-stations]
                                           (assoc station :distance
                                                  (utils/calculate-distance (first (station :location))
@@ -87,13 +73,40 @@
                                                                            (.. % -coords -latitude))))))]
           (.html ($ "#nearby-stations") (templates/unordered-list-of-nearest-stations stations current-url))))))
 
+
+(defn make-websocket
+  []
+  (let [socket (.connect js/io)]
+    (.on socket "connect"
+         (fn []
+           (doto socket
+             (.on "new-tweet" #(let [tweets-section ($ "#relevant-tweets")
+                                     tweet-html     (templates/div-of-relevant-tweets [(js->clj % :keywordize-keys true)])]
+                                 (.log js/console %)
+                                 (if (= (.-length ($ "div" tweets-section)) 0)
+                                   (.html tweets-section tweet-html)
+                                   (.prepend ($ "ul" tweets-section) (.find ($ tweet-html) "li")))))
+             (.emit "join-room" current-url))))))
+             
+
+(defn update-tweet-time
+  []
+  (js/setTimeout (fn []
+                   (update-tweet-time)
+                   (.each ($ "time")
+                          #(this-as this
+                                    (let [$this ($ this)]
+                                      (.html $this (utils/pretty-date (.attr $this "data-time"))))))) 30000))
+
 (defn main
   []
-  (if (.-geolocation js/Modernizr)
+  (when (.-geolocation js/Modernizr)
     (show-closest-stations))
   (when js/PREDICTIONS
     (.show ($ "div.status-bar"))
     (indicate-freshness 60)
-    (refresh-predictions)))
+    (refresh-predictions)
+    (update-tweet-time)
+    (make-websocket)))
 
-(main)
+($ main)
