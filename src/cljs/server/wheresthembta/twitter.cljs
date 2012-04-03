@@ -8,7 +8,7 @@
 
 
 
-(def node-twitter (node/require "/root/projects/node-twitter/lib/twitter"))
+(def node-twitter (node/require config/path-to-patched-node-twitter))
 
 (def keys-and-tokens (clj->js {:consumer_key        config/consumer-key
                                :consumer_secret     config/consumer-secret
