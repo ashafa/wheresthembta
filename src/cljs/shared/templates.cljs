@@ -65,12 +65,12 @@
                       time-str    (utils/format-seconds seconds)
                       time-html   (if is-reverse?
                                     (cond (= seconds 0)  [:li {:class (str revenue " refresh")} time-str]
-                                          (< seconds 25) [:li {:class revenue} "Approaching"]
-                                          (= seconds 25) [:li {:class (str revenue " refresh")} "Approaching"]
-                                          (< seconds 50) [:li {:class revenue} "Arriving"]
-                                          (= seconds 50) [:li {:class (str revenue " refresh")} "Arriving"]
-                                          (< seconds 80) [:li {:class revenue} "Departing"]
-                                          (= seconds 80) [:li {:class (str revenue " refresh")} "Departing"])
+                                          (< seconds 20) [:li {:class revenue} "Approaching"]
+                                          (= seconds 20) [:li {:class (str revenue " refresh")} "Approaching"]
+                                          (< seconds 40) [:li {:class revenue} "Arriving"]
+                                          (= seconds 40) [:li {:class (str revenue " refresh")} "Arriving"]
+                                          (< seconds 70) [:li {:class revenue} "Departing"]
+                                          (= seconds 70) [:li {:class (str revenue " refresh")} "Departing"])
                                     [:li time-str])]
                   time-html))))]])])])
 

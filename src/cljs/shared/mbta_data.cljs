@@ -160,7 +160,7 @@
                                    :title         "Malden Center"
                                    :platform-keys #{"OMALN" "OMALS"}
                                    :location      [-71.07433 42.42723]
-                                   :search-for    [#"(?i)\bmalden(\W*cen.*)?\b"]
+                                   :search-for    [#"(?i)\bmalden\W*c[ent]\w*\b"]
                                    :search-not    []}
                                   {:id            "wellington"
                                    :title         "Wellington"
@@ -197,7 +197,7 @@
                                    :platform-keys #{"OSTSN" "OSTSS"}
                                    :location      [-71.057717 42.358675]
                                    :search-for    [#"(?i)state\W?st\W" #"(?i)\bat state\b" #"(?i)\bto state\b" #"(?i)\bin state\b" #"(?i)\bfrom state\b"]
-                                   :search-not    []}
+                                   :search-not    [#"(?i)\bstate\W*house\b"]}
                                   {:id            "downtown-crossing"
                                    :title         "Downtown Crossing - Orange Line"
                                    :platform-keys #{"ODTSN" "ODTSS"}
@@ -316,7 +316,7 @@
                                    :title         "Maverick"
                                    :platform-keys #{"BMAVE" "BMAVW"}
                                    :location      [-71.039212 42.368719]
-                                   :search-for    [#"(?i)maverick"]
+                                   :search-for    [#"(?i)\bmaverick\b"]
                                    :search-not    []}
                                   {:id            "aquarium"
                                    :title         "Aquarium"
@@ -329,7 +329,7 @@
                                    :platform-keys #{"BSTAE" "BSTAW"}
                                    :location      [-71.057708 42.358617]
                                    :search-for    [#"(?i)(\W|^)state\W*st\W" #"(?i)\bat state\b" #"(?i)\bto state\b" #"(?i)\bin state\b" #"(?i)\bfrom state\b"]
-                                   :search-not    []}
+                                   :search-not    [#"(?i)\bstate\W*house\b"]}
                                   {:id            "government-center"
                                    :title         "Government Center"
                                    :platform-keys #{"BGOVE" "BGOVW"}

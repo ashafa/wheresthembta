@@ -31,7 +31,8 @@
                                        (doseq [waiter @waiters] (waiter %))
                                        (reset! waiters []))
                         rest      (-> (.get restler real-time-feed-url)
-                                      (.on "complete" #(set-cache (js->clj (.parse js/JSON %) :keywordize-keys true)))
+                                      (.on "2xx" #(set-cache (js->clj (.parse js/JSON %) :keywordize-keys true)))
+                                      (.on "4xx" #(set-cache (or data [])))
                                       (.on "error" #(set-cache (or data []))))]
                     (reset! timeout (js/setTimeout #(.. rest -request (abort "timeout")) 2000)))))))
         (callback req res [])))))
