@@ -1,4 +1,4 @@
-(ns wheresthembta.real-time-feed
+(ns wheresthembta.mbta-feed
   (:require [cljs.nodejs :as node]
             [wheresthembta.shared.mbta-data :as mbta-data]))
 
@@ -11,12 +11,12 @@
 (def waiters (atom []))
 
 
-(defn get-real-time-feed-data
+(defn get-feed-data
   [callback]
   (fn [req res]
     (let [transit-id (.. req -params -transit)
           line-id    (.. req -params -line)]
-      (if-let [real-time-feed-url (mbta-data/get-value transit-id :lines line-id :real-time-feed-url)]
+      (if-let [real-time-feed-url (mbta-data/get transit-id :lines line-id :real-time-feed-url)]
         (let [{:keys [data time status]} (@feed-cache line-id)]
           (if (and (= status ::not-fetching) (< (/ (- (.now js/Date) time) 1000) 15))
             (callback req res data)
@@ -31,7 +31,7 @@
                                        (doseq [waiter @waiters] (waiter %))
                                        (reset! waiters []))
                         rest      (-> (.get restler real-time-feed-url)
-                                      (.on "2xx" #(set-cache (js->clj (.parse js/JSON %) :keywordize-keys true)))
+                                      (.on "complete" #(set-cache (js->clj (.parse js/JSON %) :keywordize-keys true)))
                                       (.on "4xx" #(set-cache (or data [])))
                                       (.on "error" #(set-cache (or data []))))]
                     (reset! timeout (js/setTimeout #(.. rest -request (abort "timeout")) 2000)))))))

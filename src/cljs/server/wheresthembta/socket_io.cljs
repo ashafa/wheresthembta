@@ -10,7 +10,7 @@
 (defn send-to-room
   [room message]
   (.. @io -sockets (to room) (emit "new-tweet" message)))
-
+ 
 (defn hook
   [router]
   (reset! io (.listen (node/require "socket.io") router))

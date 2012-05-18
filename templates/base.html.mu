@@ -72,7 +72,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script>!window.jQuery && document.write(unescape('%3Cscript src="/static/js/lib/jquery-1.7.1.min.js"%3E%3C/script%3E'))</script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/static/js/script.js"></script>
+    <script src="/static/js/script.js?v=4"></script>
     <script>
       var SERVER_TIME_DIFF = 0, PREDICTIONS = false;
       {{#predictions}}

@@ -71,7 +71,7 @@
                                                                            (second (station :location))
                                                                            (.. % -coords -longitude)
                                                                            (.. % -coords -latitude))))))]
-          (.html ($ "#nearby-stations") (templates/unordered-list-of-nearest-stations stations current-url))))))
+          (.html ($ "#nearby-stations") (templates/list-of-nearest-stations stations current-url))))))
 
 
 (defn make-websocket

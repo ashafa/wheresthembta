@@ -1,4 +1,5 @@
 (ns wheresthembta.shared.mbta-data
+  (:refer-clojure :exclude [get])
   (:require [clojure.string :as string]))
 
 
@@ -55,7 +56,7 @@
                                    :search-for    [#"(?i)charles\W*mgh" #"(?i)\bmgh\b" #"(?i)\bat charles\b" #"(?i)\bto charles\b"]
                                    :search-not    []}
                                   {:id            "park-street"
-                                   :title         "Park Street"
+                                   :title         "Park Street - Red Line"
                                    :platform-keys #{"RPRKN" "RPRKS"}
                                    :location      [-71.062403 42.356372]
                                    :search-for    [#"(?i)park\W*st" #"(?i)\bat park\b" #"(?i)\bto park\b"]
@@ -64,7 +65,7 @@
                                    :title         "Downtown Crossing - Red Line"
                                    :platform-keys #{"RDTCN" "RDTCS"}
                                    :location      [-71.05899463560769 42.35430908203125]
-                                   :search-for    [#"(?i)dtx" #"(?i)\bdown\W*town\b"]
+                                   :search-for    [#"(?i)\bdtx\b" #"(?i)\bdown\W*town\W*[cx]\w*\b"]
                                    :search-not    []}
                                   {:id            "south-station"
                                    :title         "South Station"
@@ -76,7 +77,7 @@
                                    :title         "Broadway"
                                    :platform-keys #{"RBRON" "RBROS"}
                                    :location      [-71.05712 42.34287]
-                                   :search-for    [#"(?i)broadway\W*st"]
+                                   :search-for    [#"(?i)broadway\W*st" #"(?i)\bbroadway\b"]
                                    :search-not    []}
                                   {:id            "andrew"
                                    :title         "Andrew"
@@ -181,13 +182,13 @@
                                    :search-for    [#"(?i)community\W*col"]
                                    :search-not    []}
                                   {:id            "north-station"
-                                   :title         "North Station"
+                                   :title         "North Station - Orange Line"
                                    :platform-keys #{"ONSTN" "ONSTS"}
                                    :location      [-71.061055 42.365472]
                                    :search-for    [#"(?i)north\W*st" #"(?i)\bn\W*station\b" #"(?i)bruins" #"(?i)celtics"]
                                    :search-not    []}
                                   {:id            "haymarket"
-                                   :title         "Haymarket"
+                                   :title         "Haymarket - Orange Line"
                                    :platform-keys #{"OHAYN" "OHAYS"}
                                    :location      [-71.05827 42.36243]
                                    :search-for    [#"(?i)haymarket"]
@@ -196,7 +197,7 @@
                                    :title         "State - Orange Line"
                                    :platform-keys #{"OSTSN" "OSTSS"}
                                    :location      [-71.057717 42.358675]
-                                   :search-for    [#"(?i)state\W?st\W" #"(?i)\bat state\b" #"(?i)\bto state\b" #"(?i)\bin state\b" #"(?i)\bfrom state\b"]
+                                   :search-for    [#"(?i)state\W?st\W" #"(?i)\bat state\b" #"(?i)\bto state\b" #"(?i)\bin state\b" #"(?i)\bfrom state\b" #"(?i)\bstate street\b"]
                                    :search-not    [#"(?i)\bstate\W*house\b"]}
                                   {:id            "downtown-crossing"
                                    :title         "Downtown Crossing - Orange Line"
@@ -328,13 +329,13 @@
                                    :title         "State - Blue Line"
                                    :platform-keys #{"BSTAE" "BSTAW"}
                                    :location      [-71.057708 42.358617]
-                                   :search-for    [#"(?i)(\W|^)state\W*st\W" #"(?i)\bat state\b" #"(?i)\bto state\b" #"(?i)\bin state\b" #"(?i)\bfrom state\b"]
+                                   :search-for    [#"(?i)(\W|^)state\W*st\W" #"(?i)\bat state\b" #"(?i)\bto state\b" #"(?i)\bin state\b" #"(?i)\bfrom state\b" #"(?i)\bstate street\b"]
                                    :search-not    [#"(?i)\bstate\W*house\b"]}
                                   {:id            "government-center"
-                                   :title         "Government Center"
+                                   :title         "Government Center - Blue Line"
                                    :platform-keys #{"BGOVE" "BGOVW"}
                                    :location      [-71.05939865112305 42.359161376953125]
-                                   :search-for    [#"(?i)government\W*c[ent]" #"(?i)(\W|^)gov\W*c[ent]"]
+                                   :search-for    [#"(?i)government\W*c[ent]" #"(?i)(\W|^)govt?\W*c[ent]"]
                                    :search-not    []}
                                   {:id            "bowdoin"
                                    :title         "Bowdoin"
@@ -344,12 +345,15 @@
                                    :search-not    []}]}]}])
 
 
-(defn get-value
+(defn get
   [& path]
   (reduce (fn [d id]
-            (cond (nil? d) nil
-                  (keyword? id) (d id)
-                  (vector? d) (first (filter #(= (:id %) id) d))
+            (cond (nil? d)
+                  nil
+                  (keyword? id)
+                  (d id)
+                  (vector? d)
+                  (first (filter #(= (:id %) id) d))
                   :else nil))
           transit-system path))
 
@@ -357,5 +361,13 @@
   (flatten
    (map (fn [transit]
           (for [line (transit :lines)]
-            (map #(assoc % :url (str "/" (string/join "/" [(transit :id) (line :id) (% :id)]))) (line :stations))))
+            (let [path #(str "/"
+                             (string/join
+                              "/"
+                              (take %1 [(transit :id)
+                                       (line :id)
+                                       (%2 :id)])))]
+              (map #(assoc %
+                      :line-url (path 2 %)
+                      :url (path 3 %)) (line :stations)))))
         transit-system)))
