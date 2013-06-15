@@ -12,14 +12,11 @@
 
 
 (defn get-feed-data
-  [version callback]
+  [callback]
   (fn [req res]
     (let [transit-id (.. req -params -transit)
           line-id    (.. req -params -line)]
-      (if-let [real-time-feed-url
-               (if (= "v1" version)
-                 (mbta-data/get transit-id :lines line-id :real-time-feed-url)
-                 (mbta-data/get transit-id :lines line-id :real-time-feed-url-v2))]
+      (if-let [real-time-feed-url (mbta-data/get transit-id :lines line-id :real-time-feed-url-v2)]
         (let [{:keys [data time status]} (@feed-cache line-id)]
           (if (and (= status ::not-fetching) (< (/ (- (.now js/Date) time) 1000) 15))
             (callback req res data)
@@ -34,14 +31,15 @@
                                         (doseq [waiter @waiters] (waiter %))
                                         (reset! waiters []))
                         rest       (-> (.get restler real-time-feed-url)
+                                       (.removeAllListeners)
                                        (.on "complete"
-                                            #(try
-                                               (set-cache! (js->clj (.parse js/JSON %) :keywordize-keys true))
-                                               (catch js/Object e
-                                                 (println e))))
+                                              #(try
+                                                 (set-cache! (js->clj (.parse js/JSON %) :keywordize-keys true))
+                                                 (catch js/Object e
+                                                   (println e))))
                                        (.on "4xx"
-                                            #(set-cache! (or data [])))
+                                              #(set-cache! (or data [])))
                                        (.on "error"
-                                            #(set-cache! (or data []))))]
+                                              #(set-cache! (or data []))))]
                     (reset! timeout (js/setTimeout #(.. rest -request (abort "timeout")) 2000)))))))
         (callback req res [])))))
