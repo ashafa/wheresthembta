@@ -31,8 +31,8 @@
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <script src="/static/js/lib/modernizr-1.7.min.js"></script>
-    <link rel="stylesheet" href="/static/css/style.css?v=37">
-    <link rel="stylesheet" href="/static/css/font-awesome.css?v=1">
+    <link rel="stylesheet" href="/static/css/style.css?v=38">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.css" rel="stylesheet">
   </head>
   <body>
     <div id="container">
@@ -55,7 +55,7 @@
           {{{ main-content }}}
   
         </section>
-        <section id="relevant-tweets">
+        <section class="relevant-tweets">
           {{{ relevant-tweets }}}
         </section>
         <section id="nearby-stations"></section>
@@ -64,7 +64,7 @@
             <li{{#about}} class="active"{{/about}}><a href="/about">About</a></li>
             <li><a href="//twitter.com/wheresthembta" class="external">Twitter</a></li>
             <li><a href="//github.com/ashafa/wheresthembta" class="external">GitHub</a></li>
-            <li> &copy; 2012 Where's the MBTA?</li>
+            <li>2013 Where's the MBTA?</li>
           </ul>
         </footer>
       </div>
@@ -72,13 +72,17 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script>!window.jQuery && document.write(unescape('%3Cscript src="/static/js/lib/jquery-1.7.1.min.js"%3E%3C/script%3E'))</script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/static/js/script.js?v=4"></script>
+    <script src="/static/js/script.js?v=11"></script>
     <script>
-      var SERVER_TIME_DIFF = 0, PREDICTIONS = false;
+      var SERVER_TIME_DIFF = 0, PREDICTIONS = false, STAGING = false;
       {{#predictions}}
       SERVER_TIME_DIFF = new Date().getTime() - {{ time }};
       PREDICTIONS = {{{ predictions-json }}};
       {{/predictions}}
+      
+      {{#staging}}
+      STAGING = true;
+      {{/staging}}
     </script>
     <script>
       var _gaq=[['_setAccount','UA-28700129-1'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID

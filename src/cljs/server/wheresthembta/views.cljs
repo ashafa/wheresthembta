@@ -11,8 +11,8 @@
 
 
 
-(set! (. (node/require "mu") -templateRoot)
-      config/TEMPLATE-ROOT)
+(set! (. (node/require "mu2") -root) config/TEMPLATE-ROOT)
+
 
 (defn render-json
   [json]
@@ -23,19 +23,21 @@
   (render 404 (>> "base.html"
                   {:title        "404"
                    :main-content "Resource not found."})))
-  
+
+
 (def home
   (render (>> "base.html"
-              {:title "Where's the MBTA?"
-               :home true
-               :main-content
-               (templates/list-of-transit-systems)})))
+              {:title        "Where's the MBTA?"
+               :home         true
+               :main-content (templates/list-of-transit-systems)})))
+
 
 (def about
   (render (>> "base.html"
-              {:title "About"
-               :about true
+              {:title        "About"
+               :about        true
                :bread-crumbs (templates/bread-crumbs)})))
+
 
 (def lines
   (render
@@ -43,13 +45,11 @@
      (if-let [lines (mbta-data/get transit-id :lines)]
        (render
         (>> "base.html"
-            {:title
-             ((mbta-data/get transit-id) :title)
-             :bread-crumbs
-             (templates/bread-crumbs)
-             :main-content
-             (templates/list-of-lines transit-id lines)}))
+            {:title        (:title (mbta-data/get transit-id))
+             :bread-crumbs (templates/bread-crumbs)
+             :main-content (templates/list-of-lines transit-id lines)}))
        resource-not-found))))
+
 
 (def stations
   (render
@@ -58,47 +58,60 @@
      (if-let [stations
               (mbta-data/get
                transit-id :lines line-id :stations)]
-       (render (>> "base.html"
-                   {:title
-                    ((mbta-data/get
-                      transit-id :lines line-id) :title)
-                    :bread-crumbs
-                    (templates/bread-crumbs transit-id)
-                    :main-content
-                    (templates/list-of-stations
-                     title transit-id line-id stations)}))
-       resource-not-found))))
-  
-(def station-info
+       (twitter/get-related-tweets
+        (render
+         [req res tweets]
+         (>> "base.html"
+             {:title                ((mbta-data/get transit-id :lines line-id) :title)
+              :bread-crumbs         (templates/bread-crumbs transit-id)
+              :relevant-line-tweets (templates/div-of-relevant-tweets tweets)
+              :main-content         (templates/list-of-stations title transit-id line-id stations)})))
+        resource-not-found))))
+
+
+(def station-info-v2
   (mbta-feed/get-feed-data
+   "v2"
    (render
     [req res feed-data]
     (let [transit-id (.. req -params -transit)
           line-id    (.. req -params -line)
           station-id (.. req -params -station)]
-      (if-let [platform-keys (mbta-data/get transit-id :lines line-id :stations station-id :platform-keys)]
-        (let [prediction-data     (filter #(platform-keys (:PlatformKey %)) feed-data)
-              directions          (mbta-data/get transit-id :lines line-id :directions)
-              station-predictions (map (fn [direction]
-                                         {:direction-key   (:key direction)
-                                          :direction-title (:title direction)
-                                          :predictions     (for [prediction prediction-data
-                                                                 :when (and (= (:route direction) (prediction :Route))
-                                                                            (= (:key direction) (last (prediction :PlatformKey))))]
-                                                             {:prediction (/ (. (utils/convert-to-utc-date (js/Date. (prediction :Time))) (getTime)) 1000)
-                                                              :revenue    (prediction :Revenue)})}) directions)
-              predictions-json    (.stringify js/JSON (utils/clj->js station-predictions))]
+      (if-let [platform-title
+               (mbta-data/get transit-id :lines
+                              line-id    :stations
+                              station-id :title)]
+        (let [platform-title
+              (first (string/split platform-title #"\s-\s"))
+              prediction-data
+              (reduce #(let [destination (:Destination %2)
+                             stops       (%1 destination)
+                             predictions (map (fn [prediction] (assoc prediction :Note (%2 :Note))) (:Predictions %2))
+                             stop        (filter (fn [prediction] (= (:Stop prediction) platform-title)) predictions)]
+                         (if stops
+                           (if (> (count stop) 0)
+                             (assoc-in %1 [destination] (apply conj stops stop)) %1)
+                           (assoc %1 destination stop)))
+                      {} (:Trips (:TripList feed-data)))
+              prediction-data
+              (map #(hash-map :time        (:CurrentTime (:TripList feed-data))
+                              :title       (% :title)
+                              :predictions (prediction-data (% :direction-key)))
+                   (mbta-data/get transit-id :lines line-id :directions))
+              predictions-json
+              (.stringify js/JSON (clj->js prediction-data))]
           (if (= (.-method req) "POST")
             (render-json predictions-json)
             (twitter/get-related-tweets
              (render
-              [req res tweets]
+              [req res primary-tweets secondary-tweets]
               (>> "base.html"
-                  {:title            (first (string/split (:title (mbta-data/get transit-id :lines line-id :stations station-id)) #"\s-\s"))
+                  {:title (first (string/split (:title (mbta-data/get transit-id :lines line-id :stations station-id)) #"\s-\s"))
                    :bread-crumbs     (templates/bread-crumbs transit-id :lines line-id)
-                   :main-content     (templates/div-of-station-predictions station-predictions)
-                   :relevant-tweets  (templates/div-of-relevant-tweets tweets)
+                   :main-content     (templates/div-of-station-predictions-v2 prediction-data)
+                   :relevant-tweets  (templates/div-of-relevant-tweets primary-tweets secondary-tweets)
                    :time             (.getTime (js/Date.))
+                   :staging          false
                    :predictions      true
                    :predictions-json predictions-json})))))
         resource-not-found)))))

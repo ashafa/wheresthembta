@@ -1,20 +1,25 @@
 (ns wheresthembta.redis
   (:refer-clojure :exclude [get set del keys])
-  (:require [cljs.nodejs :as node])
-  (:use [wheresthembta.shared.utils :only [clj->js]]))
+  (:require [cljs.nodejs :as node]))
 
 
 
 (def redis (.createClient (node/require "redis")))
 
 
-
 (defn json-encode [data]
   (.stringify js/JSON (clj->js data)))
+
 
 (defn json-decode [data]
   (js->clj (if (string? data) (.parse js/JSON data) data) :keywordize-keys true))
 
+
+(defn json-decode-array
+  [error data callback]
+  (callback
+   (if data
+     (map #(json-decode %) data))))
 
 (defn set
   ([key value]
@@ -24,27 +29,26 @@
 
 (defn get
   [key callback]
-  (.get redis key #(callback (if %2 (json-decode %2)))))
+  (.get redis key
+        #(callback (if %2 (json-decode %2)))))
 
 (defn mget
   [keys callback]
-  (.mget redis (clj->js keys) (fn [error values]
-                                (callback
-                                 (if values
-                                   (map #(json-decode %) values))))))
+  (.mget redis (clj->js keys)
+         #(json-decode-array %1 %2 callback)))
 
 (defn lpush
   ([key value]
      (lpush key value #()))
   ([key value callback]
-     (.lpush redis key (json-encode value) #(callback %2))))
+     (.lpush redis key
+             (json-encode value)
+             #(callback %2))))
 
 (defn lrange
   [key start stop callback]
-  (.lrange redis key start stop (fn [error values]
-                                (callback
-                                 (if values
-                                   (map #(json-decode %) values))))))
+  (.lrange redis key start stop
+           #(json-decode-array %1 %2 callback)))
 
 (defn ltrim
   ([key start stop]
@@ -58,6 +62,17 @@
   ([key timeout callback]
      (.expire redis key timeout callback)))
 
+(defn expire-at
+  ([key timestamp]
+     (expire-at key timeout #()))
+  ([key timestamp callback]
+     (.expireat redis key timestamp callback)))
+
+(defn ttl
+  [key callback]
+  (.ttl redis key callback))
+
+
 (defn keys
   [pattern callback]
   (.keys redis pattern #(callback (js->clj %2))))
@@ -69,8 +84,3 @@
      (.del redis (clj->js keys) #(callback %2))))
 
 ;(keys "*" #(del %))
-
-(lrange "/subway/orange-line" 0 20
-        (fn [tweet-ids]
-          (mget tweet-ids #(println (filter (fn [d] (number? (d :retweet_count)))  %)))))
-

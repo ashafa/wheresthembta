@@ -10,9 +10,10 @@
     :lines [{:id                 "red-line"
              :title              "Red Line"
              :real-time-feed-url "http://developer.mbta.com/Data/red.json"
-             :directions         [{:key "N" :route "0" :title "To Alewife"}
-                                  {:key "S" :route "0" :title "To Braintree"}
-                                  {:key "S" :route "1" :title "To Ashmont"}]
+             :real-time-feed-url-v2 "http://developer.mbta.com/lib/rthr/red.json"
+             :directions         [{:key "N" :route "0" :title "To Alewife" :direction-key "Alewife"}
+                                  {:key "S" :route "0" :title "To Braintree" :direction-key "Braintree"}
+                                  {:key "S" :route "1" :title "To Ashmont" :direction-key "Ashmont"}]
              :stations           [{:id            "alewife"
                                    :title         "Alewife"
                                    :platform-keys #{"RALEN" "RALES"}
@@ -25,32 +26,32 @@
                                    :location      [-71.12231 42.39626]
                                    :search-for    [#"(?i)\bdavis\b"]
                                    :search-not    [#"(?i)gm davis" #"(?i)jon davis" #"(?i)jonathan davis" #"(?i)john davis"]}
-                                  {:id            "porter"
-                                   :title         "Porter"
+                                  {:id            "porter-square"
+                                   :title         "Porter Square"
                                    :platform-keys #{"RPORN" "RPORS"}
                                    :location      [-71.1192655 42.388451]
                                    :search-for    [#"(?i)porter"]
                                    :search-not    []}
-                                  {:id            "harvard"
-                                   :title         "Harvard"
+                                  {:id            "harvard-square"
+                                   :title         "Harvard Square"
                                    :platform-keys #{"RHARN" "RHARS"}
                                    :location      [-71.11897587776184 42.37360239028931]
                                    :search-for    [#"(?i)harvard"]
-                                   :search-not    [#"(?i)\bharvard st\b"]}
+                                   :search-not    [#"(?i)harvard\W*st" #"(?i)harvard\W*av"]}
                                   {:id            "central-square"
                                    :title         "Central Square"
                                    :platform-keys #{"RCENN" "RCENS"}
                                    :location      [-71.10348813170638 42.36517333984375]
                                    :search-for    [#"(?i)central sq" #"(?i)at central" #"(?i)from central" #"(?i)to central"]
                                    :search-not    []}
-                                  {:id            "kendall"
-                                   :title         "Kendall"
+                                  {:id            "kendall-mit"
+                                   :title         "Kendall/MIT"
                                    :platform-keys #{"RKENN" "RKENS"}
                                    :location      [-71.08628511428833 42.36255168914795]
                                    :search-for    [#"(?i)kendall" #"(?i)\bm\W?i\W?t\b"]
                                    :search-not    []}
                                   {:id            "charles-mgh"
-                                   :title         "Charles / MGH"
+                                   :title         "Charles/MGH"
                                    :platform-keys #{"RMGHN" "RMGHS"}
                                    :location      [-71.07221961021423 42.36124277114868]
                                    :search-for    [#"(?i)charles\W*mgh" #"(?i)\bmgh\b" #"(?i)\bat charles\b" #"(?i)\bto charles\b"]
@@ -86,7 +87,7 @@
                                    :search-for    [#"(?i)at andrew" #"(?i)to andrew" #"(?i)from andrew" #"(?i)\bin andrew\b"]
                                    :search-not    []}
                                   {:id            "jfk-umass"
-                                   :title         "JFK / Umass"
+                                   :title         "JFK/UMass"
                                    :platform-keys #{"RJFKN" "RJFKS"}
                                    :location      [-71.05238 42.32060]
                                    :search-for    [#"(?i)\bumass\b" #"(?i)\bjfk\b"]
@@ -149,8 +150,9 @@
             {:id                 "orange-line"
              :title              "Orange Line"
              :real-time-feed-url "http://developer.mbta.com/Data/orange.json"
-             :directions         [{:key "N" :route "0" :title "To Oak Grove"}
-                                  {:key "S" :route "0" :title "To Forest Hills"}]
+             :real-time-feed-url-v2 "http://developer.mbta.com/lib/rthr/orange.json"
+             :directions         [{:key "N" :route "0" :title "To Oak Grove" :direction-key "Oak Grove"}
+                                  {:key "S" :route "0" :title "To Forest Hills" :direction-key "Forest Hills"}]
              :stations           [{:id            "oak-grove"
                                    :title         "Oak Grove"
                                    :platform-keys #{"OOAKN" "OOAKS"}
@@ -169,8 +171,8 @@
                                    :location      [-71.0769502331444 42.4044189453125]
                                    :search-for    [#"(?i)wellignton"]
                                    :search-not    []}
-                                  {:id            "sullivan-square"
-                                   :title         "Sullivan Square"
+                                  {:id            "sullivan"
+                                   :title         "Sullivan"
                                    :platform-keys #{"OSULN" "OSULS"}
                                    :location      [-71.074715 42.384012]
                                    :search-for    [#"(?i)sullivan"]
@@ -193,8 +195,8 @@
                                    :location      [-71.05827 42.36243]
                                    :search-for    [#"(?i)haymarket"]
                                    :search-not    []}
-                                  {:id            "state"
-                                   :title         "State - Orange Line"
+                                  {:id            "state-street"
+                                   :title         "State Street - Orange Line"
                                    :platform-keys #{"OSTSN" "OSTSS"}
                                    :location      [-71.057717 42.358675]
                                    :search-for    [#"(?i)state\W?st\W" #"(?i)\bat state\b" #"(?i)\bto state\b" #"(?i)\bin state\b" #"(?i)\bfrom state\b" #"(?i)\bstate street\b"]
@@ -211,8 +213,8 @@
                                    :location      [-71.062503 42.35207]
                                    :search-for    [#"(?i)china\W*town"]
                                    :search-not    []}
-                                  {:id            "tufts-medical-center"
-                                   :title         "Tufts Medical Center"
+                                  {:id            "tufts-medical"
+                                   :title         "Tufts Medical"
                                    :platform-keys #{"ONEMN" "ONEMS"}
                                    :location      [-71.063262 42.350127]
                                    :search-for    [#"(?i)tufts\W*m[ed]"]
@@ -223,8 +225,8 @@
                                    :location      [-71.076007 42.347238]
                                    :search-for    [#"(?i)(\W|^)back\W*bay"]
                                    :search-not    []}
-                                  {:id            "massachusetts-avenue"
-                                   :title         "Massachusetts Avenue"
+                                  {:id            "mass-ave"
+                                   :title         "Mass Ave"
                                    :platform-keys #{"OMASN" "OMASS"}
                                    :location      [-71.083556 42.342047]
                                    :search-for    [#"(?i)mass\W*ave" #"(?i)massachusetts\W*ave"]
@@ -269,8 +271,9 @@
             {:id                 "blue-line"
              :title              "Blue Line"
              :real-time-feed-url "http://developer.mbta.com/Data/blue.json"
-             :directions         [{:key "W" :route "0" :title "To Bowdoin"}
-                                  {:key "E" :route "0" :title "To Wonderland"}]
+             :real-time-feed-url-v2 "http://developer.mbta.com/lib/rthr/blue.json"
+             :directions         [{:key "W" :route "0" :title "To Bowdoin" :direction-key "Bowdoin"}
+                                  {:key "E" :route "0" :title "To Wonderland" :direction-key "Wonderland"}]
              :stations           [{:id            "wonderland"
                                    :title         "Wonderland"
                                    :platform-keys #{"BWONE" "BWONW"}
@@ -294,7 +297,7 @@
                                    :platform-keys #{"BSUFE" "BSUFW"}
                                    :location      [-70.997195 42.390199]
                                    :search-for    [#"(?i)suffolk"]
-                                   :search-not    []}
+                                   :search-not    [#"(?i)suffolk\W*u" #"(?i)suffolk\W*law"]}
                                   {:id            "orient-heights"
                                    :title         "Orient Heights"
                                    :platform-keys #{"BORHE" "BORHW"}
@@ -325,8 +328,8 @@
                                    :location      [-71.05264689683094 42.3594970703125]
                                    :search-for    [#"(?i)aquarium"]
                                    :search-not    []}
-                                  {:id            "state"
-                                   :title         "State - Blue Line"
+                                  {:id            "state-street"
+                                   :title         "State Street - Blue Line"
                                    :platform-keys #{"BSTAE" "BSTAW"}
                                    :location      [-71.057708 42.358617]
                                    :search-for    [#"(?i)(\W|^)state\W*st\W" #"(?i)\bat state\b" #"(?i)\bto state\b" #"(?i)\bin state\b" #"(?i)\bfrom state\b" #"(?i)\bstate street\b"]
@@ -348,26 +351,17 @@
 (defn get
   [& path]
   (reduce (fn [d id]
-            (cond (nil? d)
-                  nil
-                  (keyword? id)
-                  (d id)
-                  (vector? d)
-                  (first (filter #(= (:id %) id) d))
-                  :else nil))
+            (cond (nil? d)      nil
+                  (keyword? id) (d id)
+                  (vector? d)   (first (filter #(= (:id %) id) d))
+                  :else         nil))
           transit-system path))
+
 
 (def all-stations
   (flatten
    (map (fn [transit]
           (for [line (transit :lines)]
-            (let [path #(str "/"
-                             (string/join
-                              "/"
-                              (take %1 [(transit :id)
-                                       (line :id)
-                                       (%2 :id)])))]
-              (map #(assoc %
-                      :line-url (path 2 %)
-                      :url (path 3 %)) (line :stations)))))
+            (let [path #(str "/" (string/join "/" (take %1 [(transit :id) (line :id) (%2 :id)])))]
+              (map #(assoc % :line-url (path 2 %) :url (path 3 %)) (line :stations)))))
         transit-system)))

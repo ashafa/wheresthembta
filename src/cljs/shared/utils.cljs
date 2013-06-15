@@ -1,21 +1,5 @@
 (ns wheresthembta.shared.utils)
 
-
-
-(defn clj->js
-  "Recursively transforms ClojureScript maps into Javascript objects,
-   other ClojureScript colls into JavaScript arrays, and ClojureScript
-   keywords into JavaScript strings."
-  [x]
-  (cond
-    (string? x) x
-    (keyword? x) (name x)
-    (map? x) (.-strobj (reduce (fn [m [k v]]
-                                 (assoc m (clj->js k) (clj->js v))) {} x))
-    (coll? x) (apply array (map clj->js x))
-    :else x))
-
-
 (defn calculate-distance
   "Calculates distance between two geographic locations."
   [lon-1 lat-1 lon-2 lat-2]
@@ -81,12 +65,12 @@
   (let [text          (tweet :text)
         urls          (-> tweet :entities :urls)
         url-regex     (js/RegExp. "(((https?://)|www\\.).+?)(([!?,.\\)]+)?[\\]\\)]?)([^a-z0-9_\\-\\./]|$)" "ig")
-        mention-regex (js/RegExp. "(^|[^a-z0-9_/\\\\])@([a-z0-9_]+)" "ig")
+        mention-regex (js/RegExp. "(^|[^/\\\\])@([a-z0-9_]+)" "ig")
         hashtag-regex (js/RegExp. "(^|[^a-z0-9_/\\\\])#([a-z]+[a-z0-9_]*|[0-9]+[a-z_]+)" "ig")]
     (-> text
         (.replace url-regex #(loop [url urls]
                                (if (or (= (:url (first url)) %2) (= 0 (count url)))
                                  (str "<a href='" %2 "' class='external'>" (or (and (= 0 (count url)) %2) (:display_url (first url))) "</a>" %7)
                                  (recur (next url)))))
-        (.replace mention-regex #(str %2 "@<a href='//twitter.com/" %3 "' class='external'>" %3 "</a>"))
+        (.replace mention-regex #(str %2 "<a href='//twitter.com/" %3 "' class='external'>@" %3 "</a>"))
         (.replace hashtag-regex #(str %2 "<a href='//search.twitter.com/search?q=" %3 "' class='external'>#" %3 "</a>")))))

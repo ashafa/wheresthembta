@@ -4,11 +4,11 @@
 .#*
 \#*
 
-lib
+
 .monitor
 .nodemonignore
-/app/
-/scripts/
+/app/out/
 /static/js/out/
+/target/
 script.js
 config.cljs

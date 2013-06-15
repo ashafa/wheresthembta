@@ -3,14 +3,15 @@
 
 (defmacro render
   [& body]
-  (let [output       (last body)
-        render-fn?   (= (and (list? output) (first output)) 'render)
-        template?    (= (and (list? output) (first output)) '>>)
-        args         (if (vector? (first body)) (first body) ['req 'res])
+  (let [output (last body)
+        render-fn? (= (and (list? output) (first output)) 'render)
+        template? (= (and (list? output) (first output)) '>>)
+        args (if (vector? (first body)) (first body) ['req 'res])
         handler-args (if (= (count args) 1) (conj args 'res) args)
-        res-code     (or (first (filter integer? body)) 200)
+        res-code (or (first (filter integer? body)) 200)
         default-type {:Content-Type "text/html; charset=UTF-8"}
-        headers      (merge default-type (or (first (filter map? body)) {}))]
+        headers (merge default-type
+                       (or (first (filter map? body)) {}))]
     (cond template?
           `(fn [~@handler-args]
              (let [req#     (first ~handler-args)
@@ -21,17 +22,27 @@
                (cond (fn? context#)
                      (context# req# res#)
                      (map? context#)
-                     (.render (node/require "mu") file# (utils/clj->js context#) (utils/clj->js {})
-                              (fn [error# output#]
-                                (if error#
-                                  (do (.writeHeader res# 500 (utils/clj->js ~default-type))
-                                      (.end res# (str error#)))
-                                  (do (.writeHeader res# ~res-code (utils/clj->js ~headers))
-                                      (doto output#
-                                        (.addListener "data" #(.write res# %))
-                                        (.addListener "end"  #(.end res#)))))))
+                     (let [page-data# (atom "")
+                           mu# (node/require "mu2")
+                           mu-compiled# (.compileAndRender
+                                         mu#
+                                         file# (cljs.core/clj->js context#))]
+                       (if config/debug
+                         (.clearCache mu#))
+                       (doto mu-compiled#
+                         (.on "data"
+                              (fn [data#]
+                                (swap! page-data# str data#)))
+                         (.on "end"
+                              (fn []
+                                (.writeHeader res# 200 (cljs.core/clj->js ~headers))
+                                (.end res# @page-data#)))
+                         (.on "error"
+                              (fn [error#]
+                                (.writeHeader res# 500 (cljs.core/clj->js ~default-type))
+                                (.end res# error#)))))
                      :else
-                     (do (.writeHeader res# 500 (utils/clj->js ~default-type))
+                     (do (.writeHeader res# 500 (cljs.core/clj->js ~default-type))
                          (.end res# "'map' to render template OR 'fn' required.")))))
           render-fn?
           `(fn [~@handler-args]
@@ -48,5 +59,5 @@
           :else
           `(fn [~@handler-args]
              (doto (second ~handler-args)
-               (.writeHeader ~res-code (utils/clj->js ~headers))
+               (.writeHeader ~res-code (cljs.core/clj->js ~headers))
                (.end (if (string? ~output) ~output)))))))

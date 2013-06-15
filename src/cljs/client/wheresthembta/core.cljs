@@ -54,7 +54,7 @@
   []
   (js/setTimeout
    (fn []
-     (let [predictions-html ($ (templates/div-of-station-predictions (js->clj js/PREDICTIONS :keywordize-keys true)))]
+     (let [predictions-html ($ (templates/div-of-station-predictions-v2 (js->clj js/PREDICTIONS :keywordize-keys true)))]
        (if (> (.-length (.find predictions-html "li.refresh")) 0) (get-predictions))
        (.html ($ "#predictions") (.html predictions-html))
        (refresh-predictions))) 1000))
@@ -80,13 +80,12 @@
     (.on socket "connect"
          (fn []
            (doto socket
+             (.emit "join-room" current-url)
              (.on "new-tweet" #(let [tweets-section ($ "#relevant-tweets")
                                      tweet-html     (templates/div-of-relevant-tweets [(js->clj % :keywordize-keys true)])]
-                                 (.log js/console %)
                                  (if (= (.-length ($ "div" tweets-section)) 0)
                                    (.html tweets-section tweet-html)
-                                   (.prepend ($ "ul" tweets-section) (.find ($ tweet-html) "li")))))
-             (.emit "join-room" current-url))))))
+                                   (.prepend ($ "ul" tweets-section) (.find ($ tweet-html) "li"))))))))))
              
 
 (defn update-tweet-time
@@ -102,7 +101,9 @@
   []
   (when (.-geolocation js/Modernizr)
     (show-closest-stations))
-  (when js/PREDICTIONS
+  (when js/STAGING
+    (js/Swipe (.getElementById js/document "predictions")))
+  (when (and js/PREDICTIONS (not js/STAGING))
     (.show ($ "div.status-bar"))
     (indicate-freshness 60)
     (refresh-predictions)

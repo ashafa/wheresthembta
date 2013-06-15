@@ -3,22 +3,32 @@
             [wheresthembta.socket-io :as socket-io]
             [wheresthembta.twitter :as twitter]
             [wheresthembta.config :as config]
-            [wheresthembta.views :as view]))
+            [wheresthembta.views :as views]))
 
 
 
-(defn main
+(def http (node/require "http"))
+
+(def router (node/require "router"))
+
+
+(defn -main
   [& args]
-  (let [router (.create (node/require "router"))]
-    (doto router
-      (.get  "/" view/home)
-      (.get  "/about" view/about)
-      (.get  "/{transit}" view/lines)
-      (.get  "/{transit}/{line}" view/stations)
-      (.get  "/{transit}/{line}/{station}" view/station-info)
-      (.post "/{transit}/{line}/{station}" view/station-info)
-      (.listen config/PORT))
-    (socket-io/hook router)
-    (twitter/connect)))
+  (let [routes (router)]
+    (doto routes
+      (.get  "/" views/home)
+      (.get  "/about" views/about)
+      (.get  "/{transit}" views/lines)
+      (.get  "/{transit}/{line}" views/stations)
+      (.get  "/{transit}/{line}/{station}" views/station-info-v2)
+      (.post "/{transit}/{line}/{station}" views/station-info-v2)
+      (.all "*" views/four-oh-four))
+    (twitter/connect)
+    (let [server (.createServer http routes)]
+      (doto server
+        (socket-io/hook)
+        (.listen config/PORT))
+      (println (str "Listening on " config/PORT "...")))))
 
-(set! *main-cli-fn* main)
+
+(set! *main-cli-fn* -main)

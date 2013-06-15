@@ -267,8 +267,8 @@ h4 {
    text-align: left;
    background: #eaeaea;
    color: #777;
-   font-size: 120%;
-   font-weight: normal;
+   font-size: 130%;
+   font-weight: bold;
    padding: 5px 10px;
 }
 
@@ -343,6 +343,9 @@ div#predictions {
    text-align: left;
 }
 
+div#predictions h2 {
+   font-size: 190%;
+}
 
 div#predictions ul {
    padding: 10px 0;
@@ -351,7 +354,7 @@ div#predictions ul {
 
 div#predictions li.prediction {
    position: relative;
-   margin-bottom: 25px;
+   margin-bottom: 35px;
 }
 
 
@@ -368,7 +371,8 @@ div#predictions ul.directions {
    position: absolute;
    width: 100%;
    top: 20px;
-   
+   white-space: nowrap;
+   overflow: hidden;
 
 }
 
@@ -376,7 +380,20 @@ div#predictions ul.directions li {
    display: inline-block;
    padding: 0 5px 0 10px;
    font-size: 170%;
-   height: 45px;  
+   height: 60px;  
+   position: relative;
+}
+
+div#predictions ul.directions li span.note {
+   color: #777;
+   padding: 2px 6px;
+   top: 32px;
+   left: 10px;
+   display: block;
+   position: absolute;
+   font-size: 50%;
+   border-radius: 9px;
+   background: #eaeaea;
 }
 
 
@@ -392,7 +409,7 @@ section#main ul li.info {
 
 section#nearby-stations {
    padding-top: 7px;
-
+   height: 234px;
 }
 
 footer {
@@ -445,6 +462,7 @@ div.tool-tip {
    text-align: center;
    display: none;
    z-index: 10;
+   
 }
 
 div.tool-tip span {
@@ -453,7 +471,9 @@ div.tool-tip span {
    width: 40px;
    font-size: 33px; 
    font-weight: bold;
-   margin: 40px auto;
+   top: 50%;
+   margin: -40px auto 0 auto;
+   vertical-align: middle;
    color: #ddd;
    background-color: rgba(0,0,0,0.8);
    border-radius: 5px;
@@ -462,11 +482,38 @@ div.tool-tip span {
 
 
 ul.tweets {
-   margin-bottom: 35px;
+   margin: 15px 0 35px;
+   font-size: 100%;
+}
+
+ul.tweets.station {
+   font-size: 115%;
 }
 
 ul.tweets li {
-   margin: 15px 10px 0px 10px;
+   margin: 0px 0px 0px 0px;
+   padding: 10px 10px;
+   
+}
+
+ul.tweets li.current time {
+   color: #ff6600;
+
+}
+
+ul.tweets.station li {
+   margin-top: 25px;
+   margin-bottom: 20px;
+}
+
+ul.tweets li img {
+   float: left;
+   border: 3px solid #ddd;
+   border-radius: 3px;
+}
+
+ul.tweets li div {
+   margin: 0 0 0 68px;
 }
 
 ul.tweets li strong {
@@ -484,6 +531,23 @@ ul.tweets li p {
 
 ul.tweets li time {
    color: #aaa;
+}
+
+.swipe {
+   overflow: hidden;
+   visibility: hidden;
+   position: relative;
+}
+
+.swipe-wrap {
+   overflow: hidden;
+   position: relative;
+}
+
+.swipe-wrap > div {
+   float:left;
+   width:100%;
+   position: relative;
 }
 
 /* Adaptive Styles
@@ -519,10 +583,9 @@ ul.tweets li time {
       padding: 0 8px;
    }
  
- 
-}
+ }
 
-@media only screen and (max-width : 320px)  {
+@media only screen and (max-width : 0px)  {
 
    div#predictions ul.directions li {
       font-size: 140%;

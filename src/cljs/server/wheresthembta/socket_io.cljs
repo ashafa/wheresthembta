@@ -1,6 +1,5 @@
 (ns wheresthembta.socket-io
-  (:require [cljs.nodejs :as node])
-  (:use [wheresthembta.shared.utils :only [clj->js]]))
+  (:require [cljs.nodejs :as node]))
 
 
 
@@ -8,19 +7,18 @@
 
 
 (defn send-to-room
-  [room message]
-  (.. @io -sockets (to room) (emit "new-tweet" message)))
- 
+  [room command message]
+    (.. @io -sockets (to room) (emit command message)))
+
+
 (defn hook
-  [router]
-  (reset! io (.listen (node/require "socket.io") router))
+  [server]
+  (reset! io (.listen (node/require "socket.io") server))
   (doto @io
     (.enable "browser client minification")
     (.enable "browser client etag")
     (.enable "browser client gzip")
-    (.set "close timeout" (* 60 1000))
-    (.set "polling duration" (* 60 1000))
-    (.set "transports" (clj->js ["websocket" "htmlfile" "flashsocket" "xhr-polling" "jsonp-polling"]))
+    (.set "transports" (clj->js ["websocket" "xhr-polling"]))
     (.. -sockets
         (on "connection"
             (fn [socket]
