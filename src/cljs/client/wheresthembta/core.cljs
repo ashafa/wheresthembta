@@ -13,24 +13,6 @@
 (def fresh-indicator (atom nil))
 
 
-(defn get-predictions
-  []
-  (client-utils/get-json-with-post current-url {}
-    {:success (fn [data]
-                (-> ($ "#status-good")
-                    (.stop true true)
-                    (.fadeIn 500))
-                (-> ($ "#main")
-                    (.stop true true)
-                    (.animate (utils/clj->js {:opacity 1}) 500))
-                (-> ($ "div.tool-tip")
-                    (.stop true true)
-                    (.fadeOut 500 #(.remove ($ "div.tool-tip"))))
-                (indicate-freshness 60)
-                (set! js/PREDICTIONS data))}))
-
-
-
 (defn indicate-freshness
   [age]
   (js/clearTimeout @fresh-indicator)
@@ -42,13 +24,29 @@
                            (-> ($ "#main")
                                (.prepend  (templates/status-bar-tool-tip ""))
                                (.stop true true)
-                               (.animate (utils/clj->js {:opacity 0.5}) 500))
+                               (.animate (clj->js {:opacity 0.5}) 500))
                            (-> ($ "div.tool-tip")
                                (.stop true true)
                                (.fadeIn 500)
                                (.click get-predictions)))
                          (* age 1000))))
 
+
+(defn get-predictions
+  []
+  (client-utils/get-json-with-post current-url {}
+    {:success (fn [data]
+                (-> ($ "#status-good")
+                    (.stop true true)
+                    (.fadeIn 500))
+                (-> ($ "#main")
+                    (.stop true true)
+                    (.animate (clj->js {:opacity 1}) 500))
+                (-> ($ "div.tool-tip")
+                    (.stop true true)
+                    (.fadeOut 500 #(.remove ($ "div.tool-tip"))))
+                (indicate-freshness 59)
+                (set! js/PREDICTIONS data))}))
 
 (defn refresh-predictions
   []
@@ -97,6 +95,7 @@
                                     (let [$this ($ this)]
                                       (.html $this (utils/pretty-date (.attr $this "data-time"))))))) 30000))
 
+
 (defn main
   []
   (when (.-geolocation js/Modernizr)
@@ -109,5 +108,6 @@
     (refresh-predictions)
     (update-tweet-time)
     (make-websocket)))
+
 
 ($ main)

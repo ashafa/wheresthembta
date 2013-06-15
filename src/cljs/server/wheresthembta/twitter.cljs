@@ -81,7 +81,6 @@
 
 (defn reconnect
   [reason]
-  (.log js/console reason)
   (.log js/console (str "Reconnecting ..."))
   (let [time (+ @connect-time 250)
         time (if (> time 16000) 16000 time)]

@@ -71,16 +71,12 @@
 
 (def station-info-v2
   (mbta-feed/get-feed-data
-   "v2"
    (render
     [req res feed-data]
     (let [transit-id (.. req -params -transit)
           line-id    (.. req -params -line)
           station-id (.. req -params -station)]
-      (if-let [platform-title
-               (mbta-data/get transit-id :lines
-                              line-id    :stations
-                              station-id :title)]
+      (if-let [platform-title (mbta-data/get transit-id :lines line-id  :stations station-id :title)]
         (let [platform-title
               (first (string/split platform-title #"\s-\s"))
               prediction-data
@@ -92,14 +88,15 @@
                            (if (> (count stop) 0)
                              (assoc-in %1 [destination] (apply conj stops stop)) %1)
                            (assoc %1 destination stop)))
-                      {} (:Trips (:TripList feed-data)))
-              prediction-data
+                      {}
+                      (:Trips (:TripList feed-data)))
+              prediction-data-formatted
               (map #(hash-map :time        (:CurrentTime (:TripList feed-data))
                               :title       (% :title)
                               :predictions (prediction-data (% :direction-key)))
                    (mbta-data/get transit-id :lines line-id :directions))
               predictions-json
-              (.stringify js/JSON (clj->js prediction-data))]
+              (.stringify js/JSON (clj->js prediction-data-formatted))]
           (if (= (.-method req) "POST")
             (render-json predictions-json)
             (twitter/get-related-tweets
@@ -108,7 +105,7 @@
               (>> "base.html"
                   {:title (first (string/split (:title (mbta-data/get transit-id :lines line-id :stations station-id)) #"\s-\s"))
                    :bread-crumbs     (templates/bread-crumbs transit-id :lines line-id)
-                   :main-content     (templates/div-of-station-predictions-v2 prediction-data)
+                   :main-content     (templates/div-of-station-predictions-v2 prediction-data-formatted)
                    :relevant-tweets  (templates/div-of-relevant-tweets primary-tweets secondary-tweets)
                    :time             (.getTime (js/Date.))
                    :staging          false
