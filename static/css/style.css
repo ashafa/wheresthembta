@@ -469,15 +469,14 @@ div.tool-tip span {
    display: inline-block;
    position: relative;
    width: 40px;
-   font-size: 33px; 
-   font-weight: bold;
+   font-size: 28px;
    top: 50%;
    margin: -40px auto 0 auto;
    vertical-align: middle;
    color: #ddd;
    background-color: rgba(0,0,0,0.8);
    border-radius: 5px;
-   padding: 15px 20px 12px 20px;
+   padding: 21px 20px 19px 21px;
 }
 
 
