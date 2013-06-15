@@ -11,4 +11,5 @@
 /static/js/out/
 /target/
 script.js
-config.cljsstart.js
+config.cljs
+start.js
