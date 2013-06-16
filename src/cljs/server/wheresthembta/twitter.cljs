@@ -7,15 +7,15 @@
 
 
 
-(def node-twitter
-  (node/require config/path-to-patched-node-twitter))
+(def node-twitter (node/require config/path-to-patched-node-twitter))
+
+(def connect-time (atom 2000))
 
 (def keys-and-tokens {:consumer_key        config/consumer-key
                       :consumer_secret     config/consumer-secret
                       :access_token_key    config/access-token-key
                       :access_token_secret config/access-token-secret})
 
-(def connect-time (atom 2000))
 
 
 (defn get-related-tweets
@@ -24,23 +24,20 @@
     (let [url-tokens (.split (.-url req) "/")]
       (redis/lrange
        (.-url req) 0 20
-       (fn [tweet-ids]
+       (fn [station-tweet-ids]
          (redis/mget
-          tweet-ids
-          (fn [tweets]
-            (if (= (count url-tokens) 4)
-              (redis/lrange
+          station-tweet-ids
+          (fn [station-tweets]
+            (redis/lrange
                (apply str (interpose "/" (butlast url-tokens))) 0 20
-               (fn [tweet-ids]
+               (fn [line-tweet-ids]
                  (redis/mget
-                  tweet-ids
-                  (fn [secondary-tweets]
-                    (callback req res
-                              (filter (complement nil?) tweets)
-                              (filter (complement nil?) secondary-tweets))))))
-              (callback req res
-                        []
-                        (filter (complement nil?) tweets))))))))))
+                  line-tweet-ids
+                  (fn [line-tweets]
+                    (do
+                      (callback req res
+                                (filter (complement nil?) station-tweets)
+                                (filter (complement nil?) line-tweets))))))))))))))
 
 
 (defn tag-tweet
@@ -75,8 +72,8 @@
              (redis/ttl
               tweet-id
               (fn [time-to-live]
-                (let [time-to-live (+ time-to-live (if (< retweet-count 10) (* 2 60 60) 0))]
-                  (redis/set tweet-id tweet #(redis/expire tweet-id time-to-live))))))))))))
+                (let [time-to-live (+ time-to-live (if (< retweet-count 3) (* 0.5 60 60) 0))]
+                  (redis/expire tweet-id time-to-live)))))))))))
   
 
 (defn reconnect

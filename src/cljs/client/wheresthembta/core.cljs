@@ -100,9 +100,7 @@
   []
   (when (.-geolocation js/Modernizr)
     (show-closest-stations))
-  (when js/STAGING
-    (js/Swipe (.getElementById js/document "predictions")))
-  (when (and js/PREDICTIONS (not js/STAGING))
+  (when js/PREDICTIONS
     (.show ($ "div.status-bar"))
     (indicate-freshness 60)
     (refresh-predictions)
