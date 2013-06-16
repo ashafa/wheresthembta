@@ -143,21 +143,18 @@
 
 
 (defhtml div-of-relevant-tweets
-  [station-tweets tweets]
-  (if (> (count tweets) 0)
+  [station-tweets line-tweets]
+  (if (> (count line-tweets) 0)
     [:div
      [:h4 "Relevant Tweets"]
      [:ul.tweets
-      (let [station-tweets-ids (set (map #(% :id_str) station-tweets))]
-        (for [tweet tweets]
+      (let [station-tweet-ids (set (map #(% :id_str) station-tweets))]
+        (for [tweet line-tweets]
           (let [screen-name (-> tweet :user :screen_name)
-                created-at (tweet :created_at)]
-            [:li {:class (if (station-tweets-ids (tweet :id_str)) "current")}
+                created-at  (tweet :created_at)]
+            [:li {:class (if (station-tweet-ids (tweet :id_str)) "current")}
              [:strong screen-name ":"]
              [:p (utils/linkify-tweet-text tweet)]
-             [:a {:href
-                  (str "//twitter.com/"
-                       screen-name "/status/"
-                       (tweet :id_str))}
+             [:a {:href (str "//twitter.com/" screen-name "/status/" (tweet :id_str))}
               [:time {:data-time created-at}
                (utils/pretty-date created-at)]]])))]]))

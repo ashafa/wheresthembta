@@ -58,15 +58,13 @@
      (if-let [stations
               (mbta-data/get
                transit-id :lines line-id :stations)]
-       (twitter/get-related-tweets
-        (render
-         [req res tweets]
-         (>> "base.html"
-             {:title                ((mbta-data/get transit-id :lines line-id) :title)
-              :bread-crumbs         (templates/bread-crumbs transit-id)
-              :relevant-line-tweets (templates/div-of-relevant-tweets tweets)
-              :main-content         (templates/list-of-stations title transit-id line-id stations)})))
-        resource-not-found))))
+       (render
+        [req res]
+        (>> "base.html"
+            {:title        ((mbta-data/get transit-id :lines line-id) :title)
+             :bread-crumbs (templates/bread-crumbs transit-id)
+             :main-content (templates/list-of-stations title transit-id line-id stations)}))
+       resource-not-found))))
 
 
 (def station-info-v2
@@ -101,14 +99,13 @@
             (render-json predictions-json)
             (twitter/get-related-tweets
              (render
-              [req res primary-tweets secondary-tweets]
+              [req res station-tweets line-tweets]
               (>> "base.html"
-                  {:title (first (string/split (:title (mbta-data/get transit-id :lines line-id :stations station-id)) #"\s-\s"))
+                  {:title            (first (string/split (:title (mbta-data/get transit-id :lines line-id :stations station-id)) #"\s-\s"))
                    :bread-crumbs     (templates/bread-crumbs transit-id :lines line-id)
                    :main-content     (templates/div-of-station-predictions-v2 prediction-data-formatted)
-                   :relevant-tweets  (templates/div-of-relevant-tweets primary-tweets secondary-tweets)
+                   :relevant-tweets  (templates/div-of-relevant-tweets station-tweets line-tweets)
                    :time             (.getTime (js/Date.))
-                   :staging          false
                    :predictions      true
                    :predictions-json predictions-json})))))
         resource-not-found)))))
