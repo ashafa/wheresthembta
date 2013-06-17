@@ -72,7 +72,7 @@
 
 (defn expire-at
   ([key timestamp]
-     (expire-at key timeout #()))
+     (expire-at key timestamp #()))
   ([key timestamp callback]
      (.expireat redis key timestamp callback)))
 
