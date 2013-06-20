@@ -31,7 +31,7 @@
                                    :platform-keys #{"RPORN" "RPORS"}
                                    :location      [-71.1192655 42.388451]
                                    :search-for    [#"(?i)porter"]
-                                   :search-not    []}
+                                   :search-not    [#"(?i)reporter"]}
                                   {:id            "harvard-square"
                                    :title         "Harvard Square"
                                    :platform-keys #{"RHARN" "RHARS"}

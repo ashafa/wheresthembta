@@ -49,7 +49,9 @@
                                     (not-any? #(= true %) (search-using :search-not)))))
         tagged-stations    (filter search-for-station mbta-data/all-stations)
         tagged-lines       (set (map #(:line-url %) tagged-stations))]
-    (println tweet)
+    (if (:retweeted_status tweet)
+      (println "Retweet:"))
+    (println (:text tweet))
     (println tagged-stations)
     (println tagged-lines)
     (if (not (:retweeted_status tweet))
@@ -69,11 +71,15 @@
            (let [tweet         (:retweeted_status tweet)
                  tweet-id      (:id_str tweet)
                  retweet-count (:retweet_count tweet)]
-             (redis/ttl
-              tweet-id
-              (fn [time-to-live]
-                (let [time-to-live (+ time-to-live (if (< retweet-count 3) (* 0.5 60 60) 0))]
-                  (redis/expire tweet-id time-to-live)))))))))))
+             (redis/set
+              tweet-id tweet
+              (fn []
+                (redis/ttl
+                 tweet-id
+                 (fn [old-time-to-live]
+                   (let [time-to-live (+ old-time-to-live (if (< retweet-count 3) (* 1 60 60) 0))]
+                     (println (str "Increasing age of a retweeted status from " old-time-to-live " to " time-to-live)) 
+                     (redis/expire tweet-id time-to-live)))))))))))))
   
 
 (defn reconnect

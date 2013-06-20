@@ -36,10 +36,15 @@
                                               #(try
                                                  (set-cache! (js->clj (.parse js/JSON %) :keywordize-keys true))
                                                  (catch js/Object e
-                                                   (println e))))
+                                                   (do (set-cache! (or data []))
+                                                       (println (str "MBTA API Error: " e))))))
                                        (.on "4xx"
                                               #(set-cache! (or data [])))
                                        (.on "error"
                                               #(set-cache! (or data []))))]
                     (reset! timeout (js/setTimeout #(.. rest -request (abort "timeout")) 2000)))))))
         (callback req res [])))))
+
+
+
+
