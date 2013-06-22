@@ -1,5 +1,6 @@
 (ns wheresthembta.twitter
   (:require [cljs.nodejs :as node]
+            [clojure.string :as string]
             [wheresthembta.socket-io :as socket-io]
             [wheresthembta.redis :as redis]
             [wheresthembta.shared.mbta-data :as mbta-data]
@@ -23,7 +24,7 @@
   (fn [req res]
     (let [url-tokens (.split (.-url req) "/")]
       (redis/lrange
-       (.-url req) 0 20
+       (string/replace (.-url req) #"\?.*$" "") 0 20
        (fn [station-tweet-ids]
          (redis/mget
           station-tweet-ids
@@ -79,7 +80,8 @@
                  (fn [old-time-to-live]
                    (let [time-to-live (+ old-time-to-live (if (< retweet-count 3) (* 1 60 60) 0))]
                      (println (str "Increasing age of a retweeted status from " old-time-to-live " to " time-to-live)) 
-                     (redis/expire tweet-id time-to-live)))))))))))))
+                     (redis/expire tweet-id time-to-live)))))))
+           (println "Did not find retweeted tweet")))))))
   
 
 (defn reconnect

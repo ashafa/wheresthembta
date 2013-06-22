@@ -79,12 +79,13 @@
 
 (defn ttl
   [key callback]
-  (.ttl redis key callback))
+  (.ttl redis key #(callback %2)))
 
 
 (defn keys
   [pattern callback]
   (.keys redis pattern #(callback (js->clj %2))))
+
 
 (defn del
   ([keys]

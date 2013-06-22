@@ -37,7 +37,7 @@
                                                  (set-cache! (js->clj (.parse js/JSON %) :keywordize-keys true))
                                                  (catch js/Object e
                                                    (do (set-cache! (or data []))
-                                                       (println (str "MBTA API Error: " e))))))
+                                                       (println (str "MBTA API Error: " %))))))
                                        (.on "4xx"
                                               #(set-cache! (or data [])))
                                        (.on "error"

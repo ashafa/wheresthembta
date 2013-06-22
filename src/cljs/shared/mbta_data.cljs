@@ -96,7 +96,7 @@
                                    :title         "North Quincy"
                                    :platform-keys #{"RNQUN" "RNQUS"}
                                    :location      [-71.02920 42.27480]
-                                   :search-for    [#"(?i)north\W*quincy"]
+                                   :search-for    [#"(?i)north\W*quincy" #"(?i)\W*n\W*quincy"]
                                    :search-not    []}
                                   {:id            "wollaston"
                                    :title         "Wollaston"

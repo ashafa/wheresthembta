@@ -31,33 +31,20 @@
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <script src="/static/js/lib/modernizr-1.7.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script>!window.jQuery && document.write(unescape('%3Cscript src="/static/js/lib/jquery-1.7.1.min.js"%3E%3C/script%3E'))</script>
+    <script src="/static/js/lib/jquery.pjax.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/static/js/script.js?v=32"></script>
     <link rel="stylesheet" href="/static/css/style.css?v=41">
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.css" rel="stylesheet">
   </head>
   <body>
     <div id="container">
       <div id="wrapper">
-        <header>
-          <nav>
-            {{{ bread-crumbs }}}
-          </nav>
-          <h1>{{ title }}</h1>
-        </header>
-        <section id="main">
-          {{#predictions}}
-          <div id="status-bad" class="status-bar"></div>
-          <div id="status-good" class="status-bar"></div>
-          {{/predictions}}
-
-          {{#home}} {{> home.html }} {{/home}}
-          {{#about}} {{> about.html }} {{/about}}
-
-          {{{ main-content }}}
-  
-        </section>
-        <section class="relevant-tweets">
-          {{{ relevant-tweets }}}
-        </section>
+        <div id="pjax-container">
+          {{> pjax.html }}
+        </div>
         <section id="nearby-stations"></section>
         <footer>
           <ul>
@@ -69,17 +56,6 @@
         </footer>
       </div>
     </div>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script>!window.jQuery && document.write(unescape('%3Cscript src="/static/js/lib/jquery-1.7.1.min.js"%3E%3C/script%3E'))</script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/static/js/script.js?v=15"></script>
-    <script>
-      var SERVER_TIME_DIFF = 0, PREDICTIONS = false;
-      {{#predictions}}
-      SERVER_TIME_DIFF = new Date().getTime() - {{ time }};
-      PREDICTIONS = {{{ predictions-json }}};
-      {{/predictions}}
-    </script>
     <script>
       var _gaq=[['_setAccount','UA-28700129-1'],['_trackPageview']]; // Change UA-XXXXX-X to be your site's ID
       (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;

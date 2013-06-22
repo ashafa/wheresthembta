@@ -39,6 +39,7 @@
        ":"
        (pad-number-with-zero (mod (.abs js/Math seconds) 60))))
 
+
 (defn pretty-date
   "Takes a date string and returns a more human readable string that
    represents how long ago the date represents if the date string is
@@ -57,6 +58,7 @@
           (and (= day-diff 1) "yesterday")
           (and (< day-diff 7) (str day-diff " days ago"))
           (and (>= day-diff 7) date-str)))))
+
 
 (defn linkify-tweet-text
   "Takes a tweet and returns the tweet text with hashtags, urls (not t.co), and usernames

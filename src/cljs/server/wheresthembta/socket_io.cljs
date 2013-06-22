@@ -18,6 +18,7 @@
     (.enable "browser client minification")
     (.enable "browser client etag")
     (.enable "browser client gzip")
+    (.set "log level" 1)
     (.set "transports" (clj->js ["websocket" "xhr-polling"]))
     (.. -sockets
         (on "connection"

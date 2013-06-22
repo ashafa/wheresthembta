@@ -20,20 +20,20 @@
 
 
 (def resource-not-found
-  (render 404 (>> "base.html"
+  (render 404 (>> (if (aget (.-headers req) "x-pjax") "pjax.html" "base.html")
                   {:title        "404"
                    :main-content "Resource not found."})))
 
 
 (def home
-  (render (>> "base.html"
+  (render (>> (if (aget (.-headers req) "x-pjax") "pjax.html" "base.html")
               {:title        "Where's the MBTA?"
                :home         true
                :main-content (templates/list-of-transit-systems)})))
 
 
 (def about
-  (render (>> "base.html"
+  (render (>> (if (aget (.-headers req) "x-pjax") "pjax.html" "base.html")
               {:title        "About"
                :about        true
                :bread-crumbs (templates/bread-crumbs)})))
@@ -44,7 +44,7 @@
    (let [transit-id (.. req -params -transit)]
      (if-let [lines (mbta-data/get transit-id :lines)]
        (render
-        (>> "base.html"
+        (>> (if (aget (.-headers req) "x-pjax") "pjax.html" "base.html")
             {:title        (:title (mbta-data/get transit-id))
              :bread-crumbs (templates/bread-crumbs)
              :main-content (templates/list-of-lines transit-id lines)}))
@@ -60,7 +60,7 @@
                transit-id :lines line-id :stations)]
        (render
         [req res]
-        (>> "base.html"
+        (>> (if (aget (.-headers req) "x-pjax") "pjax.html" "base.html")
             {:title        ((mbta-data/get transit-id :lines line-id) :title)
              :bread-crumbs (templates/bread-crumbs transit-id)
              :main-content (templates/list-of-stations title transit-id line-id stations)}))
@@ -100,7 +100,7 @@
             (twitter/get-related-tweets
              (render
               [req res station-tweets line-tweets]
-              (>> "base.html"
+              (>> (if (aget (.-headers req) "x-pjax") "pjax.html" "base.html")
                   {:title            (first (string/split (:title (mbta-data/get transit-id :lines line-id :stations station-id)) #"\s-\s"))
                    :bread-crumbs     (templates/bread-crumbs transit-id :lines line-id)
                    :main-content     (templates/div-of-station-predictions-v2 prediction-data-formatted)

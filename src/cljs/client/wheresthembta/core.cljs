@@ -6,7 +6,7 @@
 
 
 
-(def current-url (.. js/document -location -pathname))
+(defn get-current-url [] (.. js/document -location -pathname))
 
 (def $ js/$)
 
@@ -34,7 +34,7 @@
 
 (defn get-predictions
   []
-  (client-utils/get-json-with-post current-url {}
+  (client-utils/get-json-with-post (get-current-url) {}
     {:success (fn [data]
                 (-> ($ "#status-good")
                     (.stop true true)
@@ -48,14 +48,16 @@
                 (indicate-freshness 59)
                 (set! js/PREDICTIONS data))}))
 
+
 (defn refresh-predictions
   []
   (js/setTimeout
    (fn []
-     (let [predictions-html ($ (templates/div-of-station-predictions-v2 (js->clj js/PREDICTIONS :keywordize-keys true)))]
-       (if (> (.-length (.find predictions-html "li.refresh")) 0) (get-predictions))
-       (.html ($ "#predictions") (.html predictions-html))
-       (refresh-predictions))) 1000))
+     (if js/PREDICTIONS
+       (let [predictions-html ($ (templates/div-of-station-predictions-v2 (js->clj js/PREDICTIONS :keywordize-keys true)))]
+         (if (> (.-length (.find predictions-html "li.refresh")) 0) (get-predictions))
+         (.html ($ "#predictions") (.html predictions-html))))
+     (refresh-predictions)) 1000))
 
 
 (defn show-closest-stations
@@ -69,7 +71,7 @@
                                                                            (second (station :location))
                                                                            (.. % -coords -longitude)
                                                                            (.. % -coords -latitude))))))]
-          (.html ($ "#nearby-stations") (templates/list-of-nearest-stations stations current-url))))))
+          (.html ($ "#nearby-stations") (templates/list-of-nearest-stations stations (get-current-url)))))))
 
 
 (defn make-websocket
@@ -78,7 +80,7 @@
     (.on socket "connect"
          (fn []
            (doto socket
-             (.emit "join-room" current-url)
+             (.emit "join-room" (get-current-url))
              (.on "new-tweet" #(let [tweets-section ($ "#relevant-tweets")
                                      tweet-html     (templates/div-of-relevant-tweets [(js->clj % :keywordize-keys true)])]
                                  (if (= (.-length ($ "div" tweets-section)) 0)
@@ -96,16 +98,22 @@
                                       (.html $this (utils/pretty-date (.attr $this "data-time"))))))) 30000))
 
 
+
 (defn main
   []
+  (refresh-predictions)
   (when (.-geolocation js/Modernizr)
     (show-closest-stations))
   (when js/PREDICTIONS
     (.show ($ "div.status-bar"))
     (indicate-freshness 60)
-    (refresh-predictions)
-    (update-tweet-time)
-    (make-websocket)))
+    (update-tweet-time)))
+
+
+(doto ($ js/document)
+  (.pjax "a:not(.external)" "#pjax-container")
+  (.on "pjax:complete" #(if js/PREDICTIONS (indicate-freshness 59) (js/clearTimeout @fresh-indicator))))
 
 
 ($ main)
+
