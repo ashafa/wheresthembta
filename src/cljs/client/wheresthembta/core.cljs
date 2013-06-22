@@ -90,14 +90,12 @@
 
 (defn update-tweet-time
   []
-  (js/setTimeout
-   (fn []
-     (update-tweet-time)
-     (.each ($ "time")
-            #(this-as this
-                      (let [$this ($ this)]
-                        (.html $this (utils/pretty-date (.attr $this "data-time"))))))) 30000))
-
+  (js/setTimeout (fn []
+                   (update-tweet-time)
+                   (.each ($ "time")
+                          #(this-as this
+                                    (let [$this ($ this)]
+                                      (.html $this (utils/pretty-date (.attr $this "data-time"))))))) 30000))
 
 
 (defn main

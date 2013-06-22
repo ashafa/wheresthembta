@@ -93,6 +93,20 @@ jQuery.ajax = function(arg1, settings) {};
 $.ajax = function(arg1, settings) {};
 
 /**
+ * @param {(string|Object.<string,*>)} arg1
+ * @param {Object.<string,*>=} settings
+ * @return {jQuery.jqXHR}
+ */
+jQuery.pjax = function(arg1, settings) {};
+
+/**
+ * @param {(string|Object.<string,*>)} arg1
+ * @param {Object.<string,*>=} settings
+ * @return {jQuery.jqXHR}
+ */
+$.pjax = function(arg1, settings) {};
+
+/**
  * @param {function(!jQuery.event,XMLHttpRequest,Object.<string, *>)} handler
  * @return {!jQuery}
  */
@@ -1680,6 +1694,18 @@ jQuery.parseJSON = function(json) {};
  * @return {Object.<string, *>}
  */
 $.parseJSON = function(json) {};
+
+/**
+ * @param {string} html
+ * @return {Object.<string, *>}
+ */
+jQuery.parseHTML = function(html, document, raw) {};
+
+/**
+ * @param {string} html
+ * @return {Object.<string, *>}
+ */
+$.parseHTML = function(html, document, raw) {};
 
 /**
  * @param {string} data
