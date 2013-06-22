@@ -98,6 +98,7 @@
                                       (.html $this (utils/pretty-date (.attr $this "data-time"))))))) 30000))
 
 
+
 (defn main
   []
   (refresh-predictions)
@@ -111,8 +112,9 @@
 
 (doto ($ js/document)
   (.pjax "a:not(.external)" "#pjax-container")
-  (.on "pjax:complete" #(if js/PREDICTIONS (indicate-freshness 59) (js/clearTimeout @fresh-indicator))))
-
+  (.on "pjax:complete" #(if js/PREDICTIONS (indicate-freshness 59) (js/clearTimeout @fresh-indicator)))
+  (.on "click" "a.external" #(this-as this (let [$this ($ this)] (.open js/window (.attr $this "href"))) false)))
+ 
 
 ($ main)
 
