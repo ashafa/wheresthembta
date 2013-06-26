@@ -260,7 +260,7 @@
                                    :platform-keys #{"OGREN" "OGRES"}
                                    :location      [-71.10772 42.30999]
                                    :search-for    [#"(?i)green\W*st"]
-                                   :search-not    []}
+                                   :search-not    [#"(?i)\btf\W*green\b"]}
                                   {:id            "forest-hills"
                                    :title         "Forest Hills"
                                    :platform-keys #{"OFORN" "OFORS"}

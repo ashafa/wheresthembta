@@ -22,7 +22,7 @@
 (def resource-not-found
   (render 404 (>> (if (aget (.-headers req) "x-pjax") "pjax.html" "base.html")
                   {:title        "404"
-                   :main-content "Resource not found."})))
+                   :main-content ""})))
 
 
 (def home
