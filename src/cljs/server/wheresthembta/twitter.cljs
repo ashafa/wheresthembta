@@ -81,7 +81,7 @@
                    (let [time-to-live (+ old-time-to-live (if (< retweet-count 3) (* 1 60 60) 0))]
                      (println (str "Increasing age of a retweeted status from " old-time-to-live " to " time-to-live)) 
                      (redis/expire tweet-id time-to-live)))))))
-           (println "Did not find retweeted tweet")))))))
+           (.log js/console "Did not find retweeted tweet")))))))
   
 
 (defn reconnect

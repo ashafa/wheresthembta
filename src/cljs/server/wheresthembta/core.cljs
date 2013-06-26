@@ -22,7 +22,7 @@
       (.get  "/{transit}/{line}" views/stations)
       (.get  "/{transit}/{line}/{station}" views/station-info-v2)
       (.post "/{transit}/{line}/{station}" views/station-info-v2)
-      (.all "*" views/four-oh-four))
+      (.all  "*" views/resource-not-found))
     (twitter/connect)
     (let [server (.createServer http routes)]
       (doto server
