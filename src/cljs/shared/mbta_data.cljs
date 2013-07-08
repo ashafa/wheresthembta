@@ -84,7 +84,7 @@
                                    :title         "Andrew"
                                    :platform-keys #{"RANDN" "RANDS"}
                                    :location      [-71.05729 42.33002]
-                                   :search-for    [#"(?i)at andrew" #"(?i)to andrew" #"(?i)from andrew" #"(?i)\bin andrew\b"]
+                                   :search-for    [#"(?i)at andrew" #"(?i)to andrew" #"(?i)from andrew" #"(?i)\bin andrew\b" #"(?i)andrew\W*sq"]
                                    :search-not    []}
                                   {:id            "jfk-umass"
                                    :title         "JFK/UMass"
