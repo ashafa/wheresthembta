@@ -384,6 +384,10 @@ div#predictions ul.directions li {
    position: relative;
 }
 
+div#predictions ul.directions li.delayed {
+   color: #aaa;
+}
+
 div#predictions ul.directions li span.note {
    color: #777;
    padding: 2px 6px;

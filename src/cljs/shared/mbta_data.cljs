@@ -297,7 +297,7 @@
                                    :platform-keys #{"BSUFE" "BSUFW"}
                                    :location      [-70.997195 42.390199]
                                    :search-for    [#"(?i)suffolk"]
-                                   :search-not    [#"(?i)suffolk\W*u" #"(?i)suffolk\W*law"]}
+                                   :search-not    [#"(?i)suffolk\W*county" #"(?i)suffolk\W*u" #"(?i)suffolk\W*law"]}
                                   {:id            "orient-heights"
                                    :title         "Orient Heights"
                                    :platform-keys #{"BORHE" "BORHW"}

@@ -78,21 +78,25 @@
                 predictions-count (count predictions)]
             (if (> predictions-count 0)
               (for [prediction (take 3 (sort-by :Seconds predictions))]
-                (let [seconds
-                      (.floor js/Math (- (+ (+ (:time (first station-predictions)) (* 4 60 60)) (prediction :Seconds)) now))
+                (let [prediction-time
+                      (+ (+ (:time (first station-predictions)) (* 4 60 60)) (prediction :Seconds))
+                      seconds
+                      (if (= (prediction :Note) "Delayed")
+                        (prediction :Seconds)
+                        (.floor js/Math (- prediction-time now)))
                       time-str
                       (utils/format-seconds seconds)
                       time-html
                       (cond (> seconds 60)
-                            [:li time-str]
+                            [:li {:class (.toLowerCase (or (prediction :Note) ""))} time-str]
                             (= seconds 60)
                             [:li {:class "refresh"} time-str]
                             (> seconds 30)
-                            [:li "Approaching"]
+                            [:li{:class (.toLowerCase (or (prediction :Note) ""))}  "Approaching"]
                             (= seconds 30)
                             [:li {:class "refresh"} "Approaching"]
                             :else
-                            [:li (if (= 0 (mod seconds 10)) {:class "refresh"}) "Arriving"])]
+                            [:li (if (= 0 (mod seconds 10)) {:class "refresh"} {:class (.toLowerCase (or (prediction :Note) ""))}) "Arriving"])]
                   (if (prediction :Note) (conj time-html [:span {:class " note"} (prediction :Note)]) time-html)))))]])])])
 
 
@@ -155,6 +159,6 @@
             [:li {:class (if (station-tweet-ids (tweet :id_str)) "current")}
              [:strong screen-name ":"]
              [:p (utils/linkify-tweet-text tweet)]
-             [:a {:href (str "//twitter.com/" screen-name "/status/" (tweet :id_str))}
+             [:a {:class "external" :href (str "//twitter.com/" screen-name "/status/" (tweet :id_str))}
               [:time {:data-time created-at}
                (utils/pretty-date created-at)]]])))]]))

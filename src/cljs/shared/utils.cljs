@@ -67,7 +67,7 @@
   (let [text          (tweet :text)
         urls          (-> tweet :entities :urls)
         url-regex     (js/RegExp. "(((https?://)|www\\.).+?)(([!?,.\\)]+)?[\\]\\)]?)([^a-z0-9_\\-\\./]|$)" "ig")
-        mention-regex (js/RegExp. "(^|[^/\\\\])@([a-z0-9_]+)" "ig")
+        mention-regex (js/RegExp. "(^|[^a-z0-9_])@([a-z0-9_]+)" "ig")
         hashtag-regex (js/RegExp. "(^|[^a-z0-9_/\\\\])#([a-z]+[a-z0-9_]*|[0-9]+[a-z_]+)" "ig")]
     (-> text
         (.replace url-regex #(loop [url urls]
