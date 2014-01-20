@@ -105,7 +105,7 @@
                    :bread-crumbs     (templates/bread-crumbs transit-id :lines line-id)
                    :main-content     (templates/div-of-station-predictions-v2 prediction-data-formatted)
                    :relevant-tweets  (templates/div-of-relevant-tweets station-tweets line-tweets)
-                   :time             (.getTime (js/Date.))
+                   :time             (.getTime (js/Date.))  
                    :predictions      true
                    :predictions-json predictions-json})))))
         resource-not-found)))))

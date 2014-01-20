@@ -34,10 +34,10 @@
                                        (.removeAllListeners)
                                        (.on "complete"
                                             #(try
-                                               (set-cache! (js->clj (.parse js/JSON %) :keywordize-keys true))
+                                               (set-cache! (js->clj % :keywordize-keys true))
                                                (catch js/Object e
                                                  (do (set-cache! [])
-                                                     (println (str "MBTA API Error: " %))))))
+                                                     (.log js/console %)))))
                                        (.on "4xx"
                                             #(set-cache! (or data [])))
                                        (.on "error"

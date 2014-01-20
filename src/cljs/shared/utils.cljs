@@ -13,7 +13,7 @@
     (* 6371 (* 2 (.atan2 js/Math (.sqrt js/Math a) (.sqrt js/Math (- 1 a)))))))
 
 
-(defn convert-to-utc-date
+(defn ^:export convert-to-utc-date
   "Converts a JavaScript date to UTC."
   [date]
   (js/Date. (. date (getUTCFullYear))

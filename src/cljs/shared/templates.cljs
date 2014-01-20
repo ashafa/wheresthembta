@@ -67,7 +67,7 @@
 (defhtml div-of-station-predictions-v2
   [station-predictions]
   [:div#predictions
-   (let [now (/ (- (. (utils/convert-to-utc-date (js/Date.)) (getTime)) js/SERVER_TIME_DIFF) 1000)]
+   (let [now (/ (- (.getTime (js/Date.)) js/SERVER_TIME_DIFF) 1000)]
      [:ul
       (for [station-prediction station-predictions]
         [:li.prediction
@@ -79,7 +79,7 @@
             (if (> predictions-count 0)
               (for [prediction (take 3 (sort-by :Seconds predictions))]
                 (let [prediction-time
-                      (+ (+ (:time (first station-predictions)) (* 4 60 60)) (prediction :Seconds))
+                      (+ (+ (:time (first station-predictions)) 5) (prediction :Seconds))
                       seconds
                       (if (= (prediction :Note) "Delayed")
                         (prediction :Seconds)
@@ -92,11 +92,15 @@
                             (= seconds 60)
                             [:li {:class "refresh"} time-str]
                             (> seconds 30)
-                            [:li{:class (.toLowerCase (or (prediction :Note) ""))}  "Approaching"]
+                            [:li {:class (.toLowerCase (or (prediction :Note) ""))} "Approaching"]
                             (= seconds 30)
                             [:li {:class "refresh"} "Approaching"]
+                            (> seconds 5)
+                            [:li {:class (.toLowerCase (or (prediction :Note) ""))} "Arriving"]
+                            (= seconds 5)
+                            [:li {:class "refresh"} "Arriving"]
                             :else
-                            [:li (if (= 0 (mod seconds 10)) {:class "refresh"} {:class (.toLowerCase (or (prediction :Note) ""))}) "Arriving"])]
+                            [:li {:class (str (if (= 0 (mod seconds 5)) "refresh ") (.toLowerCase (or (prediction :Note) "")))} "Boarding"])]
                   (if (prediction :Note) (conj time-html [:span {:class " note"} (prediction :Note)]) time-html)))))]])])])
 
 
@@ -109,10 +113,9 @@
            (station :url)
            [title line-title]
            (string/split (station :title) #"\s\-\s")]
-       (if (not= href url)
-         [:li [:a {:href href} title]
-          (if line-title
-            [:span (str " (" line-title ")")])])))])
+       [:li [:a {:href href} title]
+        (if line-title
+          [:span (str " (" line-title ")")])]))])
 
 
 (defhtml status-bar-tool-tip
