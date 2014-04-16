@@ -329,6 +329,11 @@ ul.station-list li {
 
 ul.station-list li a {
    text-decoration: none;
+   display: block;
+}
+
+ul.station-list li a:hover {
+   background-color:#efefef;
 }
 
 ul.station-list li span {
