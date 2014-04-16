@@ -317,7 +317,7 @@ section#main ul li {
 }
 
 ul.station-list {
-   padding: 10px 0 0 10px;
+   padding: 10px;
    font-size: 120%;
 
 }
@@ -330,6 +330,7 @@ ul.station-list li {
 ul.station-list li a {
    text-decoration: none;
    display: block;
+   padding:5px;
 }
 
 ul.station-list li a:hover {
